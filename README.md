@@ -1,7 +1,6 @@
 # Upgrade IKS Cluster from Calico OSS to Calico Enterprise
-Create an IKS clusters compatible for Calico Enterprise
 
-**Goal:** Create EKS cluster.
+**Goal:** Create an IKS clusters compatible for Calico Enterprise
 
 After you've [installed the CLIs](https://cloud.ibm.com/docs/containers?topic=containers-cs_cluster_tutorial#cs_cluster_tutorial_lesson1) for running Kubernetes commands and managing Docker images, you can create your first cluster! <br/>
 Be sure to specify the cluster configurations that fit your needs.
