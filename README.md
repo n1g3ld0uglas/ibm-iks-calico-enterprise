@@ -6,7 +6,13 @@ After you've [installed the CLIs](https://cloud.ibm.com/docs/containers?topic=co
 Be sure to specify the cluster configurations that fit your needs.
 
 
-## Install Options
+## Prerequisite Checks
+
+General prereq checks are listed here: <br/>
+https://cloud.ibm.com/docs/containers?topic=containers-cs_cluster_tutorial#cs_cluster_tutorial_lesson1 <br/>
+<br/>
+Install IBM Cloud CLI or use the cloud shell <br/>
+https://cloud.ibm.com/docs/cli?topic=cli-getting-started
 
 
 Default Script
