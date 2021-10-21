@@ -39,6 +39,19 @@ Get the level of permissions assigned to the user
 ibmcloud ks infra-permissions get
 ```
 
+These commands help you gather the information that you need to create a virtual server instance: <br/>
+https://cloud.ibm.com/vpc-ext/overview
+
+
+## Miscellaneous
+
+```
+ibmcloud is vpcs
+```
+```
+ibmcloud is subnets
+```
+
 ## Installing the cluster in Cloud Shell
 
 Default Script:
