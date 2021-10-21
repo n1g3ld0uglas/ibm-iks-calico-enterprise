@@ -34,6 +34,11 @@ Using ```b3c.4x16``` because it has 4 cores with 16GB of memory:
 ibmcloud ks flavors --zone ams03
 ```
 
+Get the level of permissions assigned to the user
+```
+ibmcloud ks infra-permissions get
+```
+
 ## Installing the cluster in Cloud Shell
 
 Default Script:
@@ -43,5 +48,5 @@ ibmcloud ks cluster create --location dal10 --public-vlan <public_vlan_id> --pri
 
 My Finished Script:
 ```
-ibmcloud ks cluster create classic --flavor b3c.4x16 --workers 3 --name nigel-iks-cluster
+ibmcloud ks cluster create classic --flavor b3c.4x16 --zone ams03 --workers 3 --name nigel-iks-cluster
 ```
