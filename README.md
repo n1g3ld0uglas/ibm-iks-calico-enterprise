@@ -68,3 +68,31 @@ Work in-pogress:
 ```
 ibmcloud ks cluster create vpc-classic --flavor b3c.4x16 --subnet-id 02c7-eef06d9a-650e-4d37-ba61-82cf598ae6af --vpc-id r010-850fb416-7cf7-4381-947e-881c3971ef79 --zone eu-de-1,eu-de-2,eu-de-3 --workers 3 --name nigel-icleks-cluster
 ```
+## Upgrading to Calico Enterprise
+
+ScorageClass:
+```
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: tigera-elasticsearch
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+```
+
+Persistent Volume:
+```
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: elasticsearch-data-tigera-secure-es-7f5dee596fef130f-0
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /var/tigera/elastic-data/1
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: tigera-elasticsearch
+```  
