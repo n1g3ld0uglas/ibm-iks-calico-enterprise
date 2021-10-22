@@ -59,18 +59,38 @@ Default Script:
 ibmcloud ks cluster create --location dal10 --public-vlan <public_vlan_id> --private-vlan <private_vlan_id> --machine-type b2c.4x16 --workers 3 --name <cluster_name>
 ```
 
-My Finished Script:
+#### My Finished Script:
 ```
 ibmcloud ks cluster create vpc-gen2 --flavor b3c.4x16 --zone ams03 --workers 3 --name nigel-iks-cluster
 ```
 
-Work in-pogress:
+#### Work in-pogress:
 ```
 ibmcloud ks cluster create vpc-classic --flavor b3c.4x16 --subnet-id 02c7-eef06d9a-650e-4d37-ba61-82cf598ae6af --vpc-id r010-850fb416-7cf7-4381-947e-881c3971ef79 --zone eu-de-1,eu-de-2,eu-de-3 --workers 3 --name nigel-icleks-cluster
 ```
 ## Upgrading to Calico Enterprise
 
-ScorageClass:
+After creating the cluster, assume we are installing for 50+ nodes (this will install Typha): <br/>
+https://docs.projectcalico.org/getting-started/kubernetes/self-managed-onprem/onpremises#install-calico-with-kubernetes-api-datastore-more-than-50-nodes 
+
+```
+curl https://docs.projectcalico.org/manifests/calico-typha.yaml -o calico.yaml
+```
+
+```
+kubectl apply -f calico.yaml
+```
+
+#### Setup paste option in VIM
+
+```
+:set paste
+```
+
+This will be helpful when copying over YAML manifests regularly
+
+
+#### ScorageClass:
 ```
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -80,7 +100,7 @@ provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
 ```
 
-Persistent Volume:
+#### Persistent Volume:
 ```
 apiVersion: v1
 kind: PersistentVolume
