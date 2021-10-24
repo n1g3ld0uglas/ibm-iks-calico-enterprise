@@ -116,3 +116,22 @@ spec:
   persistentVolumeReclaimPolicy: Recycle
   storageClassName: tigera-elasticsearch
 ```  
+
+To expose the manager using an IBM load balancer, create the following service:
+
+```
+kind: Service
+apiVersion: v1
+metadata:
+  name: tigera-manager-external
+  namespace: tigera-manager
+spec:
+  type: LoadBalancer
+  selector:
+    k8s-app: tigera-manager
+  externalTrafficPolicy: Local
+  ports:
+  - port: 9443
+    targetPort: 9443
+    protocol: TCP
+```
