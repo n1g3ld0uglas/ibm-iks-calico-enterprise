@@ -91,6 +91,9 @@ This will be helpful when copying over YAML manifests regularly
 
 
 #### ScorageClass:
+The Storage Classes table displays defined storage classes available to control data sets and objects within a cluster: <br/>
+https://www.ibm.com/docs/en/ts7700-virtual-tape/5.0?topic=constructs-storage-classes
+
 ```
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -101,6 +104,9 @@ volumeBindingMode: WaitForFirstConsumer
 ```
 
 #### Persistent Volume:
+A PV is a virtual storage instance that is added as a volume to the cluster: <br/>
+https://cloud.ibm.com/docs/containers?topic=containers-kube_concepts
+
 ```
 apiVersion: v1
 kind: PersistentVolume
@@ -116,8 +122,9 @@ spec:
   persistentVolumeReclaimPolicy: Recycle
   storageClassName: tigera-elasticsearch
 ```  
-
-To expose the manager using an IBM load balancer, create the following service:
+#### Load Balancer:
+To expose the manager using an IBM load balancer, create the following service: <br/>
+https://cloud.ibm.com/docs/containers?topic=containers-loadbalancer
 
 ```
 kind: Service
