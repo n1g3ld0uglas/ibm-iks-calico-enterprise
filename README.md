@@ -147,8 +147,19 @@ kubectl create secret generic tigera-pull-secret --from-file=.dockerconfigjson=c
 
 If pulling images directly from ```quay.io/tigera```, you will likely want to use the credentials provided to you by your Tigera support representative.
 
+<img width="1187" alt="Screenshot 2021-10-25 at 21 32 58" src="https://user-images.githubusercontent.com/82048393/138766647-0aae772f-5379-421e-86bc-8aa420adc584.png">
 
+Install the Tigera ```Custom Resources Defintions``` (CRD's):
+```
+kubectl create -f https://docs.tigera.io/manifests/custom-resources.yaml
+```
 
+<img width="1187" alt="Screenshot 2021-10-25 at 21 35 21" src="https://user-images.githubusercontent.com/82048393/138766927-f5396f1f-718b-4b1c-be41-826eaf2ce3f3.png">
+
+You can now monitor progress with the following command:
+```
+watch kubectl get tigerastatus
+```
 
 #### Persistent Volume:
 A PV is a virtual storage instance that is added as a volume to the cluster: <br/>
