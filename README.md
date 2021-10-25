@@ -212,6 +212,43 @@ spec:
   storageClassName: tigera-elasticsearch
 ```  
 
+<img width="1467" alt="Screenshot 2021-10-25 at 21 51 43" src="https://user-images.githubusercontent.com/82048393/138769121-1621c28e-6e0a-4a92-914f-863f2d6ef724.png">
+
+
+Confirm the new pods are getting created after the persistent volume changes:
+``` 
+kubectl get pods -A
+```
+
+<img width="1467" alt="Screenshot 2021-10-25 at 21 53 09" src="https://user-images.githubusercontent.com/82048393/138769331-85f1f4ca-0077-4d52-8ea7-f3c3badc506e.png">
+
+This process could take 3/5 mins to complete in IKS. <br/>
+The outcome should look something like the below:
+
+<img width="501" alt="Screenshot 2021-10-25 at 21 57 35" src="https://user-images.githubusercontent.com/82048393/138769861-a790b927-dd64-440c-95a6-35be80374aea.png">
+
+
+<img width="839" alt="Screenshot 2021-10-25 at 21 58 52" src="https://user-images.githubusercontent.com/82048393/138769957-0d913c6e-ea9d-45be-9651-bd524b4530a6.png">
+
+When all components show a status of ```Available```, continue to the next section.
+
+#### Secure Calico Enterprise with network policy:
+Install the following network policies to secure Calico Enterprise component communications.
+```
+kubectl create -f https://docs.tigera.io/manifests/tigera-policies.yaml
+```
+
+<img width="677" alt="Screenshot 2021-10-25 at 22 03 30" src="https://user-images.githubusercontent.com/82048393/138770579-26ecc1ed-4080-4684-89cd-e9de9b09def7.png">
+
+
+Please note that the below command only returns policies in the default ```tier```:
+```
+kubectl get globalnetworkpolicy
+```
+
+<img width="677" alt="Screenshot 2021-10-25 at 22 03 30" src="https://user-images.githubusercontent.com/82048393/138770714-9578593c-d0ff-4a53-a7ec-da5d1d9ab2c5.png">
+
+
 
 #### Load Balancer:
 To expose the manager using an IBM load balancer, create the following service: <br/>
@@ -234,7 +271,10 @@ spec:
     protocol: TCP
 ```
 
-#### Test access to your Apps
+<img width="811" alt="Screenshot 2021-10-25 at 22 16 09" src="https://user-images.githubusercontent.com/82048393/138772182-802a4291-1228-473b-a498-746e40cb90d2.png">
+
+
+#### Test Access to your Apps
 Create a node port to test your apps: <br/>
 https://cloud.ibm.com/docs/containers?topic=containers-nodeport
 
@@ -263,4 +303,23 @@ How Kubernetes forwards public network traffic through NodePort, LoadBalancer, a
 ![cs_network_planning_ov-01](https://user-images.githubusercontent.com/82048393/138760195-80b093bc-4018-4788-b1d5-514f05b6e171.png)
 
 
+#### Authentication Quickstart:
+Get started quickly with our default token authentication to log in to Calico Enterprise Manager UI and Kibana. <br/>
+```
+kubectl create sa nigel -n default
+```
 
+Give the service account permissions to access the Calico Enterprise Manager UI, and a Calico Enterprise cluster role:
+```
+kubectl create clusterrolebinding nigel-access --clusterrole tigera-network-admin --serviceaccount default:nigel
+```
+
+Get Base64 encoded token for SA account - ```nigel```:
+```
+kubectl get secret $(kubectl get serviceaccount nigel -o jsonpath='{range .secrets[*]}{.name}{"\n"}{end}' | grep token) -o go-template='{{.data.token | base64decode}}' && echo
+```
+Connect to Kibana with the elastic username. Use the following command to decode the password:
+```
+kubectl -n tigera-elasticsearch get secret tigera-secure-es-elastic-user -o go-template='{{.data.elastic | base64decode}}' && echo
+```
+Once logged in, you can configure users and their privileges from the settings page.
