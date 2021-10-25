@@ -182,8 +182,13 @@ kubectl get pods -A
 
 <img width="807" alt="Screenshot 2021-10-25 at 21 44 57" src="https://user-images.githubusercontent.com/82048393/138768253-4f2c2c77-4b83-4af9-9ab4-7f064ab67eba.png">
 
+If not an issue with pods creating, check the persistent volume claim status:
 
+```
+kubectl get pvc -A
+```
 
+<img width="1082" alt="Screenshot 2021-10-25 at 21 47 31" src="https://user-images.githubusercontent.com/82048393/138768519-fd55f60f-6d40-4518-8af2-f928c13c787e.png">
 
 
 
