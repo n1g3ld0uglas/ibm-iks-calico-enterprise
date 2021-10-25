@@ -161,6 +161,12 @@ You can now monitor progress with the following command:
 watch kubectl get tigerastatus
 ```
 
+<img width="524" alt="Screenshot 2021-10-25 at 21 37 32" src="https://user-images.githubusercontent.com/82048393/138767271-e0797b62-f2e9-46c5-b794-126587860bbe.png">
+
+
+
+
+
 #### Persistent Volume:
 A PV is a virtual storage instance that is added as a volume to the cluster: <br/>
 https://cloud.ibm.com/docs/containers?topic=containers-kube_concepts
