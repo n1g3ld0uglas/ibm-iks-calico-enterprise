@@ -294,6 +294,11 @@ spec:
      # nodePort: <31514>
 ```
 
+<img width="1127" alt="Screenshot 2021-10-25 at 22 31 37" src="https://user-images.githubusercontent.com/82048393/138774098-b19c261b-e460-417f-ae10-922dc50089fa.png">
+
+
+
+
 #### Review other options to Expose Apps:
 For production use cases, review the other options to expose your app, such as with load balancers or Ingress: <br/>
 https://cloud.ibm.com/docs/containers?topic=containers-cs_network_planning <br/>
