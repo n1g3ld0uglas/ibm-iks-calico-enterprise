@@ -163,6 +163,26 @@ watch kubectl get tigerastatus
 
 <img width="524" alt="Screenshot 2021-10-25 at 21 37 32" src="https://user-images.githubusercontent.com/82048393/138767271-e0797b62-f2e9-46c5-b794-126587860bbe.png">
 
+Wait until the ```apiserver``` shows a status of ```Available```, then proceed to the next section:
+
+<img width="524" alt="Screenshot 2021-10-25 at 21 39 43" src="https://user-images.githubusercontent.com/82048393/138767616-2d9a39e1-d592-45af-9904-298a9605390d.png">
+
+#### Install Calico Enterprise License:
+```
+kubectl create -f license.yaml
+```
+
+<img width="528" alt="Screenshot 2021-10-25 at 21 43 09" src="https://user-images.githubusercontent.com/82048393/138768021-e7c64d00-0df0-4f4a-9056-790d38af22a7.png">
+
+Check all pods are still creating:
+
+```
+kubectl get pods -A
+```
+
+<img width="807" alt="Screenshot 2021-10-25 at 21 44 57" src="https://user-images.githubusercontent.com/82048393/138768253-4f2c2c77-4b83-4af9-9ab4-7f064ab67eba.png">
+
+
 
 
 
