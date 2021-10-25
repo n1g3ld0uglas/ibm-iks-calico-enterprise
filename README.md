@@ -68,6 +68,11 @@ ibmcloud ks cluster create vpc-gen2 --flavor b3c.4x16 --zone ams03 --workers 3 -
 ```
 ibmcloud ks cluster create vpc-classic --flavor b3c.4x16 --subnet-id 02c7-eef06d9a-650e-4d37-ba61-82cf598ae6af --vpc-id r010-850fb416-7cf7-4381-947e-881c3971ef79 --zone eu-de-1,eu-de-2,eu-de-3 --workers 3 --name nigel-icleks-cluster
 ```
+
+<img width="1269" alt="Screenshot 2021-10-25 at 20 38 21" src="https://user-images.githubusercontent.com/82048393/138759272-ab4bff54-ee96-440d-bc4e-4a292620a451.png">
+
+
+
 ## Upgrading to Calico Enterprise
 
 After creating the cluster, assume we are installing for 50+ nodes (this will install Typha): <br/>
@@ -142,3 +147,11 @@ spec:
     targetPort: 9443
     protocol: TCP
 ```
+
+#### Test access to your apps
+Create a node port to test your apps: <br/>
+https://cloud.ibm.com/docs/containers?topic=containers-nodeport
+
+#### Review other options to expose apps
+For production use cases, review the other options to expose your app, such as with load balancers or Ingress: <br/>
+https://cloud.ibm.com/docs/containers?topic=containers-cs_network_planning
