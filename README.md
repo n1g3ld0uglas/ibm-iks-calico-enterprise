@@ -119,6 +119,9 @@ provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
 ```
 
+<img width="1103" alt="Screenshot 2021-10-25 at 21 10 13" src="https://user-images.githubusercontent.com/82048393/138763590-6847207b-a169-46da-acff-9dac600f3dec.png">
+
+
 #### Persistent Volume:
 A PV is a virtual storage instance that is added as a volume to the cluster: <br/>
 https://cloud.ibm.com/docs/containers?topic=containers-kube_concepts
@@ -138,6 +141,8 @@ spec:
   persistentVolumeReclaimPolicy: Recycle
   storageClassName: tigera-elasticsearch
 ```  
+
+
 #### Load Balancer:
 To expose the manager using an IBM load balancer, create the following service: <br/>
 https://cloud.ibm.com/docs/containers?topic=containers-loadbalancer
