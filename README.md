@@ -76,7 +76,13 @@ Wait for all worker nodes to be in a Ready status for Calico changes to be accep
 <img width="1269" alt="Screenshot 2021-10-25 at 20 54 29" src="https://user-images.githubusercontent.com/82048393/138761486-7a49b94a-c1d4-4419-91d6-5bbf50d43cf5.png">
 
 
-## Upgrading to Calico Enterprise
+## Upgrading to Calico Enterprise:
+
+Confirm the Calico pods are running as expected:
+```
+kubectl get pods -A
+```
+<img width="1313" alt="Screenshot 2021-10-25 at 21 00 26" src="https://user-images.githubusercontent.com/82048393/138762410-61b9739d-be33-4502-80df-148538d419bd.png">
 
 After creating the cluster, assume we are installing for 50+ nodes (this will install Typha): <br/>
 https://docs.projectcalico.org/getting-started/kubernetes/self-managed-onprem/onpremises#install-calico-with-kubernetes-api-datastore-more-than-50-nodes 
@@ -88,6 +94,8 @@ curl https://docs.projectcalico.org/manifests/calico-typha.yaml -o calico.yaml
 ```
 kubectl apply -f calico.yaml
 ```
+
+<img width="888" alt="Screenshot 2021-10-25 at 21 03 48" src="https://user-images.githubusercontent.com/82048393/138762722-28ac7df1-e0fa-4ca0-bf30-9d5b1073fe97.png">
 
 #### Setup paste option in VIM
 
