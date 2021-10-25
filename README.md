@@ -148,10 +148,33 @@ spec:
     protocol: TCP
 ```
 
-#### Test access to your apps
+#### Test access to your Apps
 Create a node port to test your apps: <br/>
 https://cloud.ibm.com/docs/containers?topic=containers-nodeport
 
-#### Review other options to expose apps
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: <my-nodeport-service>
+  labels:
+    <my-label-key>: <my-label-value>
+spec:
+  selector:
+    <my-selector-key>: <my-selector-value>
+  type: NodePort
+  ports:
+   - port: <8081>
+     # nodePort: <31514>
+```
+
+#### Review other options to Expose Apps:
 For production use cases, review the other options to expose your app, such as with load balancers or Ingress: <br/>
-https://cloud.ibm.com/docs/containers?topic=containers-cs_network_planning
+https://cloud.ibm.com/docs/containers?topic=containers-cs_network_planning <br/>
+<br/>
+How Kubernetes forwards public network traffic through NodePort, LoadBalancer, and Ingress services in IBM Cloud Kubernetes Service:
+
+![cs_network_planning_ov-01](https://user-images.githubusercontent.com/82048393/138760195-80b093bc-4018-4788-b1d5-514f05b6e171.png)
+
+
+
