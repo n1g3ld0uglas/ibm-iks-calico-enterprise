@@ -121,6 +121,34 @@ volumeBindingMode: WaitForFirstConsumer
 
 <img width="1103" alt="Screenshot 2021-10-25 at 21 10 13" src="https://user-images.githubusercontent.com/82048393/138763590-6847207b-a169-46da-acff-9dac600f3dec.png">
 
+Install the ```Tigera Operator``` and custom resource definitions:
+
+```
+kubectl create -f https://docs.tigera.io/manifests/tigera-operator.yaml
+```
+
+<img width="1560" alt="Screenshot 2021-10-25 at 21 20 44" src="https://user-images.githubusercontent.com/82048393/138765079-d33c4271-8ec5-4cce-94a0-412eb46815f1.png">
+
+Install the ```Prometheus Operator``` and related custom resource definitions:
+
+```
+kubectl create -f https://docs.tigera.io/manifests/tigera-prometheus-operator.yaml
+```
+
+The ```Prometheus Operator``` will be used to deploy Prometheus server and Alertmanager to monitor Calico Enterprise metrics:
+
+<img width="745" alt="Screenshot 2021-10-25 at 21 23 40" src="https://user-images.githubusercontent.com/82048393/138765368-cc9a207a-5c34-42bb-a15c-9aea437f2e05.png">
+
+#### Install your Pull Secret:
+
+```
+kubectl create secret generic tigera-pull-secret --from-file=.dockerconfigjson=config.json --type=kubernetes.io/dockerconfigjson -n tigera-operator
+```
+
+If pulling images directly from ```quay.io/tigera```, you will likely want to use the credentials provided to you by your Tigera support representative.
+
+
+
 
 #### Persistent Volume:
 A PV is a virtual storage instance that is added as a volume to the cluster: <br/>
