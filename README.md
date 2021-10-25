@@ -323,3 +323,10 @@ Connect to Kibana with the elastic username. Use the following command to decode
 kubectl -n tigera-elasticsearch get secret tigera-secure-es-elastic-user -o go-template='{{.data.elastic | base64decode}}' && echo
 ```
 Once logged in, you can configure users and their privileges from the settings page.
+
+
+<img width="1448" alt="Screenshot 2021-10-25 at 22 25 34" src="https://user-images.githubusercontent.com/82048393/138773268-c81858f0-b5e8-4867-95d5-e6bd03a4ed88.png">
+
+
+
+
