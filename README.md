@@ -240,10 +240,20 @@ kubectl create -f https://docs.tigera.io/manifests/tigera-policies.yaml
 
 <img width="677" alt="Screenshot 2021-10-25 at 22 03 30" src="https://user-images.githubusercontent.com/82048393/138770579-26ecc1ed-4080-4684-89cd-e9de9b09def7.png">
 
+Introduce a test ```boutique store``` web application:
+
+```
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
+```
+
+Deploy some ```Calico Network Policies``` to secure this test applications
+```
+kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/policies/boutique-policies.yaml
+```
 
 Please note that the below command only returns policies in the default ```tier```:
 ```
-kubectl get globalnetworkpolicy -n default -l projectcalico.org/tier=allow-tigera
+kubectl get globalnetworkpolicy -n default -l projectcalico.org/tier=default
 ```
 
 <img width="677" alt="Screenshot 2021-10-25 at 22 03 30" src="https://user-images.githubusercontent.com/82048393/138770714-9578593c-d0ff-4a53-a7ec-da5d1d9ab2c5.png">
