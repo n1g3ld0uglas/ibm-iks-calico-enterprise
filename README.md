@@ -243,7 +243,7 @@ kubectl create -f https://docs.tigera.io/manifests/tigera-policies.yaml
 
 Please note that the below command only returns policies in the default ```tier```:
 ```
-kubectl get globalnetworkpolicy
+kubectl get globalnetworkpolicy -n default -l projectcalico.org/tier=allow-tigera
 ```
 
 <img width="677" alt="Screenshot 2021-10-25 at 22 03 30" src="https://user-images.githubusercontent.com/82048393/138770714-9578593c-d0ff-4a53-a7ec-da5d1d9ab2c5.png">
