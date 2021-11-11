@@ -360,4 +360,22 @@ Once logged in, you can configure users and their privileges from the settings p
 
 
 
+## Scaling your IKS Cluster
+
+Get the name of the worker pool that you want to resize:
+```
+ibmcloud ks worker-pool ls --cluster nigel-iks-ce-test
+```
+
+<img width="532" alt="Screenshot 2021-11-11 at 21 58 01" src="https://user-images.githubusercontent.com/82048393/141374904-80743e67-5527-4f92-96b3-cef5fb91dee4.png">
+
+
+
+
+Resize the worker pool by designating the number of worker nodes that you want to deploy in each zone:
+```
+ibmcloud ks worker-pool resize --cluster nigel-iks-ce-test --worker-pool nigel-worker-pool  --size-per-zone 0
+```
+
+<img width="914" alt="Screenshot 2021-11-11 at 21 59 42" src="https://user-images.githubusercontent.com/82048393/141374980-dffd4c11-b88c-4f2a-b767-939dabd446f0.png">
 
