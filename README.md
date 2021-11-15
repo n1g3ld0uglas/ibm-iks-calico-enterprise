@@ -322,20 +322,47 @@ Once logged in, you can configure users and their privileges from the settings p
 
 #### Introduce a test application into your environment:
 
-Introduce a test ```boutique store``` web application:
+If your cluster does not have applications, you can use the following ```storefront``` application:
+```
+kubectl apply -f https://installer.calicocloud.io/storefront-demo.yaml
+```
+Create the ```Product``` Tier:
+```
+kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/policies/product.yaml
+```  
+## Zone-Based Architecture  
+Create the ```DMZ``` Policy:
+```
+kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/policies/dmz.yaml
+```
+Create the ```Trusted``` Policy:
+```
+kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/policies/trusted.yaml
+``` 
+Create the ```Restricted``` Policy:
+```
+kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/policies/restricted.yaml
+```
 
+#### Confirm all policies are running:
 ```
-kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
+kubectl get networkpolicies.p -n storefront -l projectcalico.org/tier=product
 ```
 
-Deploy some ```Calico Network Policies``` to secure this test applications
+## Allow Kube-DNS Traffic: 
+We need to create the following policy within the ```tigera-security``` tier <br/>
+Determine a DNS provider of your cluster (mine is 'coredns' by default)
 ```
-kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/policies/boutique-policies.yaml
+kubectl get deployments -l k8s-app=kube-dns -n kube-system
+```    
+Allow traffic for Kube-DNS / CoreDNS:
+```
+kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/policies/allow-kubedns.yaml
 ```
 
 Please note that the below command only returns policies in the default ```tier```:
 ```
-kubectl get globalnetworkpolicy -n default -l projectcalico.org/tier=default
+kubectl get globalnetworkpolicy -n storefront -l projectcalico.org/tier=product
 ```
 
 <img width="677" alt="Screenshot 2021-10-25 at 22 03 30" src="https://user-images.githubusercontent.com/82048393/138770714-9578593c-d0ff-4a53-a7ec-da5d1d9ab2c5.png">
