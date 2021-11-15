@@ -1,0 +1,631 @@
+apiVersion: projectcalico.org/v3
+kind: StagedGlobalNetworkPolicy
+metadata:
+  name: tigera-security.kubedns-allow
+spec:
+  tier: tigera-security
+  order: 0
+  selector: ''
+  namespaceSelector: ''
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        ports:
+          - '53'
+    - action: Pass
+      source: {}
+      destination: {}
+  doNotTrack: false
+  applyOnForward: false
+  preDNAT: false
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: StagedNetworkPolicy
+metadata:
+  name: product.dmz
+  namespace: storefront
+spec:
+  tier: product
+  order: 0
+  selector: fw-zone == "dmz"
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      source:
+        nets:
+          - 18.0.0.0/16
+      destination: {}
+    - action: Deny
+      source: {}
+      destination: {}
+  egress:
+    - action: Allow
+      source: {}
+      destination:
+        selector: fw-zone == "trusted"||app == "logging"
+    - action: Deny
+      source: {}
+      destination: {}
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: StagedNetworkPolicy
+metadata:
+  name: storefront.frontend
+  namespace: storefront
+spec:
+  tier: storefront
+  order: 0
+  selector: (fw-zone == "dmz"&&app == "frontend")
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: (app == "microservice2"&&fw-zone == "trusted")
+        ports:
+          - '8080'
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: app == "logging"
+        ports:
+          - '8080'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: (app == "microservice1"&&fw-zone == "trusted")
+        ports:
+          - '8080'
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: StagedNetworkPolicy
+metadata:
+  name: storefront.microservice1
+  namespace: storefront
+spec:
+  tier: storefront
+  order: 100
+  selector: (fw-zone == "trusted"&&app == "microservice1")
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: (app == "frontend"&&fw-zone == "dmz")
+      destination:
+        ports:
+          - '8080'
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: (fw-zone == "trusted"&&app == "microservice2")
+      destination:
+        ports:
+          - '8080'
+  egress:
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: (fw-zone == "restricted"&&app == "backend")
+        ports:
+          - '8080'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: (app == "microservice2"&&fw-zone == "trusted")
+        ports:
+          - '8080'
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: StagedNetworkPolicy
+metadata:
+  name: product.trusted
+  namespace: storefront
+spec:
+  tier: product
+  order: 100
+  selector: fw-zone == "trusted"
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      source:
+        selector: fw-zone == "dmz"
+      destination: {}
+    - action: Allow
+      source:
+        selector: fw-zone == "trusted"
+      destination: {}
+    - action: Deny
+      source: {}
+      destination: {}
+  egress:
+    - action: Allow
+      source: {}
+      destination:
+        selector: fw-zone == "trusted"
+    - action: Allow
+      source: {}
+      destination:
+        selector: fw-zone == "restricted"
+    - action: Deny
+      source: {}
+      destination: {}
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: StagedNetworkPolicy
+metadata:
+  name: storefront.microservice2
+  namespace: storefront
+spec:
+  tier: storefront
+  order: 200
+  selector: (fw-zone == "trusted"&&app == "microservice2")
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: (fw-zone == "dmz"&&app == "frontend")
+      destination:
+        ports:
+          - '8080'
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: (app == "microservice1"&&fw-zone == "trusted")
+      destination:
+        ports:
+          - '8080'
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: (app == "backend"&&fw-zone == "restricted")
+        ports:
+          - '8080'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: (app == "microservice1"&&fw-zone == "trusted")
+        ports:
+          - '8080'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        ports:
+          - '80'
+          - '443'
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: StagedNetworkPolicy
+metadata:
+  name: product.restricted
+  namespace: storefront
+spec:
+  tier: product
+  order: 200
+  selector: fw-zone == "restricted"
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      source:
+        selector: fw-zone == "trusted"
+      destination: {}
+    - action: Allow
+      source:
+        selector: fw-zone == "restricted"
+      destination: {}
+    - action: Deny
+      source: {}
+      destination: {}
+  egress:
+    - action: Allow
+      source: {}
+      destination: {}
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: StagedNetworkPolicy
+metadata:
+  name: product.default-deny-storefront
+  namespace: storefront
+spec:
+  tier: product
+  order: 300
+  selector: ''
+  serviceAccountSelector: ''
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: StagedNetworkPolicy
+metadata:
+  name: storefront.logging
+  namespace: storefront
+spec:
+  tier: storefront
+  order: 300
+  selector: app == "logging"
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: (app == "backend"&&fw-zone == "restricted")
+      destination:
+        ports:
+          - '8080'
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: (app == "frontend"&&fw-zone == "dmz")
+      destination:
+        ports:
+          - '8080'
+  types:
+    - Ingress
+---
+apiVersion: projectcalico.org/v3
+kind: StagedNetworkPolicy
+metadata:
+  name: storefront.backend
+  namespace: storefront
+spec:
+  tier: storefront
+  order: 400
+  selector: (app == "backend"&&fw-zone == "restricted")
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: (app == "microservice1"&&fw-zone == "trusted")
+      destination:
+        ports:
+          - '8080'
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: (app == "microservice2"&&fw-zone == "trusted")
+      destination:
+        ports:
+          - '8080'
+  egress:
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: app == "logging"
+        ports:
+          - '8080'
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: dashboard-metrics-scraper
+  namespace: kube-system
+spec:
+  podSelector:
+    matchLabels:
+      k8s-app: dashboard-metrics-scraper
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              dashboard-metrics-scraper-policy: allow
+        - podSelector:
+            matchLabels:
+              dashboard-metrics-scraper-policy: allow
+  policyTypes:
+    - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: kubernetes-dashboard
+  namespace: kube-system
+spec:
+  podSelector:
+    matchLabels:
+      k8s-app: kubernetes-dashboard
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes-dashboard-policy: allow
+        - podSelector:
+            matchLabels:
+              kubernetes-dashboard-policy: allow
+  policyTypes:
+    - Ingress
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: default.allow-icmp
+spec:
+  tier: default
+  order: 1100
+  selector: 'ibm.role in { "worker_public", "master_public" }'
+  namespaceSelector: ''
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: ICMP
+      source: {}
+      destination: {}
+  doNotTrack: false
+  applyOnForward: false
+  preDNAT: false
+  types:
+    - Ingress
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: default.allow-node-port-dnat
+spec:
+  tier: default
+  order: 1200
+  selector: ibm.role == "worker_public"
+  namespaceSelector: ''
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      source: {}
+      destination:
+        nets:
+          - 172.17.0.0/18
+  doNotTrack: false
+  applyOnForward: false
+  preDNAT: false
+  types:
+    - Ingress
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: default.allow-vrrp
+spec:
+  tier: default
+  order: 1300
+  selector: ibm.role == "worker_public"
+  namespaceSelector: ''
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: 112
+      source: {}
+      destination: {}
+  egress:
+    - action: Allow
+      protocol: 112
+      source: {}
+      destination: {}
+  doNotTrack: false
+  applyOnForward: false
+  preDNAT: false
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: default.allow-all-outbound
+spec:
+  tier: default
+  order: 1400
+  selector: 'ibm.role in { "worker_public", "master_public" }'
+  namespaceSelector: ''
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      source: {}
+      destination: {}
+  doNotTrack: false
+  applyOnForward: false
+  preDNAT: false
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: default.allow-bigfix-port
+spec:
+  tier: default
+  order: 1600
+  selector: 'ibm.role in { "worker_public", "master_public" }'
+  namespaceSelector: ''
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        ports:
+          - '52311'
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        ports:
+          - '52311'
+  doNotTrack: false
+  applyOnForward: false
+  preDNAT: false
+  types:
+    - Ingress
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: default.allow-sys-mgmt
+spec:
+  tier: default
+  order: 1700
+  selector: 'ibm.role in { "worker_public", "master_public" }'
+  namespaceSelector: ''
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      source:
+        nets:
+          - 119.81.136.0/24
+          - 119.81.138.0/23
+          - 130.198.118.0/23
+          - 158.85.116.0/24
+          - 158.85.118.0/23
+          - 159.122.116.0/24
+          - 159.122.118.0/23
+          - 159.122.136.0/24
+          - 159.122.138.0/23
+          - 159.253.156.0/24
+          - 159.253.158.0/23
+          - 159.8.116.0/24
+          - 159.8.118.0/23
+          - 159.8.196.0/24
+          - 159.8.198.0/23
+          - 161.202.116.0/24
+          - 161.202.118.0/23
+          - 168.1.116.0/24
+          - 168.1.118.0/23
+          - 168.1.16.0/24
+          - 168.1.18.0/23
+          - 169.38.116.0/24
+          - 169.38.118.0/23
+          - 169.45.118.0/23
+          - 169.46.118.0/23
+          - 169.47.118.0/23
+          - 169.48.118.0/24
+          - 169.51.118.0/24
+          - 169.54.116.0/24
+          - 169.54.118.0/23
+          - 169.55.118.0/23
+          - 169.56.116.0/24
+          - 169.56.116.0/24
+          - 169.56.118.0/24
+          - 169.57.116.0/24
+          - 169.57.118.0/23
+          - 169.57.136.0/24
+          - 169.57.138.0/23
+          - 169.60.118.0/23
+          - 169.61.118.0/23
+          - 173.192.118.0/23
+          - 173.193.116.0/24
+          - 173.193.118.0/23
+          - 174.133.116.0/24
+          - 174.133.118.0/23
+          - 184.172.118.0/23
+          - 192.255.18.0/24
+          - 192.255.38.0/24
+          - 198.23.118.0/23
+          - 208.43.118.0/23
+          - 5.10.116.0/24
+          - 5.10.118.0/23
+          - 50.22.118.0/23
+          - 50.22.255.0/24
+          - 50.23.116.0/24
+          - 50.23.118.0/23
+          - 50.23.167.0/24
+          - 66.228.118.0/23
+          - 67.228.118.0/23
+          - 75.126.61.0/24
+      destination: {}
+  doNotTrack: false
+  applyOnForward: false
+  preDNAT: false
+  types:
+    - Ingress
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: default.allow-all-private-default
+spec:
+  tier: default
+  order: 1800
+  selector: ibm.role == "worker_private"
+  namespaceSelector: ''
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      source: {}
+      destination: {}
+  egress:
+    - action: Allow
+      source: {}
+      destination: {}
+  doNotTrack: false
+  applyOnForward: false
+  preDNAT: false
+  types:
+    - Egress
+    - Ingress
