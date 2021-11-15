@@ -386,12 +386,10 @@ Allow traffic for Kube-DNS / CoreDNS:
 kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/policies/allow-kubedns.yaml
 ```
 
-Please note that the below command only returns policies in the default ```tier```:
-```
-kubectl get globalnetworkpolicy -n storefront -l projectcalico.org/tier=product
-```
 
-<img width="677" alt="Screenshot 2021-10-25 at 22 03 30" src="https://user-images.githubusercontent.com/82048393/138770714-9578593c-d0ff-4a53-a7ec-da5d1d9ab2c5.png">
+![Screenshot 2021-11-15 at 18 27 38](https://user-images.githubusercontent.com/82048393/141834934-fd7de958-f291-4901-be99-3da595a6712d.png)
+
+
 
 
 
