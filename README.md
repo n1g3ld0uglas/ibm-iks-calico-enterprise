@@ -359,7 +359,8 @@ kubectl get networkpolicies.p -n storefront -l projectcalico.org/tier=product
 We ultimately need to decide between a zone-based architecture (or allow traffic on a per-pod basis). <br/>
 NB: The below screenshot deomstrates the options in 2 separate tiers:
 
-<img width="1061" alt="Screenshot 2021-11-15 at 17 52 46" src="https://user-images.githubusercontent.com/82048393/141830502-6b2854d4-50e0-4593-b536-f03d7c1044fe.png">
+<img width="1061" alt="Screenshot 2021-11-15 at 17 54 58" src="https://user-images.githubusercontent.com/82048393/141830739-255ae682-cf01-465a-a3a7-df3b5fcc4eb0.png">
+
 
 
 
