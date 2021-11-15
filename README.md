@@ -385,6 +385,8 @@ spec:
     - Ingress
     - Egress
 
+```
+
 Create the ```Trusted``` Policy:
 ```
 kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/policies/trusted.yaml
