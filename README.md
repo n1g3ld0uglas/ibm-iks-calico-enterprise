@@ -232,32 +232,6 @@ The outcome should look something like the below:
 
 When all components show a status of ```Available```, continue to the next section.
 
-#### Secure Calico Enterprise with network policy:
-Install the following network policies to secure Calico Enterprise component communications.
-```
-kubectl create -f https://docs.tigera.io/manifests/tigera-policies.yaml
-```
-
-<img width="677" alt="Screenshot 2021-10-25 at 22 03 30" src="https://user-images.githubusercontent.com/82048393/138770579-26ecc1ed-4080-4684-89cd-e9de9b09def7.png">
-
-Introduce a test ```boutique store``` web application:
-
-```
-kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
-```
-
-Deploy some ```Calico Network Policies``` to secure this test applications
-```
-kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/policies/boutique-policies.yaml
-```
-
-Please note that the below command only returns policies in the default ```tier```:
-```
-kubectl get globalnetworkpolicy -n default -l projectcalico.org/tier=default
-```
-
-<img width="677" alt="Screenshot 2021-10-25 at 22 03 30" src="https://user-images.githubusercontent.com/82048393/138770714-9578593c-d0ff-4a53-a7ec-da5d1d9ab2c5.png">
-
 
 
 #### Load Balancer:
@@ -306,24 +280,12 @@ spec:
 
 <img width="1127" alt="Screenshot 2021-10-25 at 22 31 37" src="https://user-images.githubusercontent.com/82048393/138774098-b19c261b-e460-417f-ae10-922dc50089fa.png">
 
-The NodePort YAML I wrote was something like this:
+#### Calico Enterprise Login Page
 
-```
-apiVersion: v1
-kind: Service
-metadata:
-  name: tigera-manager-external
-  namespace: tigera-manager
-  labels:
-    owner: nigel
-spec:
-  selector:
-    k8s-app: tigera-manager
-  type: NodePort
-  ports:
-   - port: 9443
-     # nodePort: <31514>
-```
+This should be the expected login page for Calico Enterprise:
+<img width="709" alt="Screenshot 2021-11-15 at 15 37 44" src="https://user-images.githubusercontent.com/82048393/141810361-7896a001-3fae-4028-9d4e-eab315a9d236.png">
+
+
 
 #### Review other options to Expose Apps:
 For production use cases, review the other options to expose your app, such as with load balancers or Ingress: <br/>
@@ -357,6 +319,26 @@ Once logged in, you can configure users and their privileges from the settings p
 
 
 <img width="1448" alt="Screenshot 2021-10-25 at 22 25 34" src="https://user-images.githubusercontent.com/82048393/138773268-c81858f0-b5e8-4867-95d5-e6bd03a4ed88.png">
+
+#### Introduce a test application into your environment:
+
+Introduce a test ```boutique store``` web application:
+
+```
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/master/release/kubernetes-manifests.yaml
+```
+
+Deploy some ```Calico Network Policies``` to secure this test applications
+```
+kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/policies/boutique-policies.yaml
+```
+
+Please note that the below command only returns policies in the default ```tier```:
+```
+kubectl get globalnetworkpolicy -n default -l projectcalico.org/tier=default
+```
+
+<img width="677" alt="Screenshot 2021-10-25 at 22 03 30" src="https://user-images.githubusercontent.com/82048393/138770714-9578593c-d0ff-4a53-a7ec-da5d1d9ab2c5.png">
 
 
 
