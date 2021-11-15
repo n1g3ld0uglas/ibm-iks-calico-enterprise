@@ -328,6 +328,17 @@ kubectl apply -f https://installer.calicocloud.io/storefront-demo.yaml
 ```
 <img width="698" alt="Screenshot 2021-11-15 at 16 25 28" src="https://user-images.githubusercontent.com/82048393/141817656-d9f6fd40-5845-4d97-90cf-6d14435b6559.png">
 
+Confirm that the pods are present in your ```Kubernetes Dashboard``` view:
+
+<img width="1080" alt="Screenshot 2021-11-15 at 17 57 30" src="https://user-images.githubusercontent.com/82048393/141831178-6d3fe2df-feb6-4d4d-a991-d1af06c35588.png">
+
+You can also confirm which pods are running via the Calico Enterprise web user interface:
+
+<img width="1098" alt="Screenshot 2021-11-15 at 18 03 02" src="https://user-images.githubusercontent.com/82048393/141831797-376fc95b-1e7d-4467-a08d-4127dd50309e.png">
+
+
+
+
 Create the ```Product``` Tier:
 ```
 kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/policies/product.yaml
