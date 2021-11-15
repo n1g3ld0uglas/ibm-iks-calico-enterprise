@@ -326,10 +326,15 @@ If your cluster does not have applications, you can use the following ```storefr
 ```
 kubectl apply -f https://installer.calicocloud.io/storefront-demo.yaml
 ```
+<img width="698" alt="Screenshot 2021-11-15 at 16 25 28" src="https://user-images.githubusercontent.com/82048393/141817656-d9f6fd40-5845-4d97-90cf-6d14435b6559.png">
+
 Create the ```Product``` Tier:
 ```
 kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/policies/product.yaml
 ```  
+<img width="813" alt="Screenshot 2021-11-15 at 16 26 44" src="https://user-images.githubusercontent.com/82048393/141817844-ed9f7cde-c21c-480b-a35c-92194fc2cc8d.png">
+
+
 ## Zone-Based Architecture  
 Create the ```DMZ``` Policy:
 ```
