@@ -354,6 +354,15 @@ kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-pa
 kubectl get networkpolicies.p -n storefront -l projectcalico.org/tier=product
 ```
 
+![Screenshot 2021-11-15 at 17 49 53](https://user-images.githubusercontent.com/82048393/141830156-cdce2117-2722-41ed-a394-8ffa6164fe54.png)
+
+We ultimately need to decide between a zone-based architecture (or allow traffic on a per-pod basis). <br/>
+NB: The below screenshot deomstrates the options in 2 separate tiers:
+
+<img width="1061" alt="Screenshot 2021-11-15 at 17 52 46" src="https://user-images.githubusercontent.com/82048393/141830502-6b2854d4-50e0-4593-b536-f03d7c1044fe.png">
+
+
+
 ## Allow Kube-DNS Traffic: 
 We need to create the following policy within the ```tigera-security``` tier <br/>
 Determine a DNS provider of your cluster (mine is 'coredns' by default)
