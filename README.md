@@ -1,20 +1,5 @@
 # Upgrade IKS Cluster from Calico OSS to Calico Enterprise
 
-**Goal:** Create an IKS clusters compatible for Calico Enterprise
-
-After you've [installed the CLIs](https://cloud.ibm.com/docs/containers?topic=containers-cs_cluster_tutorial#cs_cluster_tutorial_lesson1) for running Kubernetes commands and managing Docker images, you can create your first cluster! <br/>
-Be sure to specify the cluster configurations that fit your needs.
-
-
-## Prerequisite Checks
-
-General prereq checks are listed here: <br/>
-https://cloud.ibm.com/docs/containers?topic=containers-cs_cluster_tutorial#cs_cluster_tutorial_lesson1 <br/>
-<br/>
-Install IBM Cloud CLI or use the cloud shell <br/>
-https://cloud.ibm.com/docs/cli?topic=cli-getting-started
-
-
 ## Setting environmental variables
 
 Finding the zones for the classic provider
@@ -124,7 +109,7 @@ volumeBindingMode: WaitForFirstConsumer
 Install the ```Tigera Operator``` and custom resource definitions:
 
 ```
-kubectl create -f https://docs.tigera.io/manifests/tigera-operator.yaml
+kubectl apply -f https://docs.tigera.io/manifests/tigera-operator.yaml
 ```
 
 <img width="1560" alt="Screenshot 2021-10-25 at 21 20 44" src="https://user-images.githubusercontent.com/82048393/138765079-d33c4271-8ec5-4cce-94a0-412eb46815f1.png">
@@ -151,7 +136,7 @@ If pulling images directly from ```quay.io/tigera```, you will likely want to us
 
 Install the Tigera ```Custom Resources Defintions``` (CRD's):
 ```
-kubectl create -f https://docs.tigera.io/manifests/custom-resources.yaml
+kubectl apply -f https://docs.tigera.io/manifests/custom-resources.yaml
 ```
 
 <img width="1187" alt="Screenshot 2021-10-25 at 21 35 21" src="https://user-images.githubusercontent.com/82048393/138766927-f5396f1f-718b-4b1c-be41-826eaf2ce3f3.png">
