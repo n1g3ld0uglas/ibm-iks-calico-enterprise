@@ -321,8 +321,14 @@ You can also confirm which pods are running via the Calico Enterprise web user i
 
 <img width="1098" alt="Screenshot 2021-11-15 at 18 03 02" src="https://user-images.githubusercontent.com/82048393/141831797-376fc95b-1e7d-4467-a08d-4127dd50309e.png">
 
+#### Replication of Policy configuration
 
+If you wish to copy my policy configuration, just run the below command:
+```
+kubectl apply -f https://raw.githubusercontent.com/n1g3ld0uglas/ibm-iks-calico-enterprise/main/policy-backup.yaml
+```
 
+#### Manual process of testing policies
 
 Create the ```Product``` Tier:
 ```
