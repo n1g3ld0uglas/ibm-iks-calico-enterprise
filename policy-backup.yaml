@@ -1,27 +1,48 @@
 apiVersion: projectcalico.org/v3
-kind: StagedGlobalNetworkPolicy
+kind: NetworkPolicy
 metadata:
-  name: tigera-security.kubedns-allow
+  name: calico-system.calico-kube-controllers
+  namespace: calico-system
 spec:
-  tier: tigera-security
+  tier: calico-system
   order: 0
-  selector: ''
-  namespaceSelector: ''
+  selector: k8s-app == "calico-kube-controllers"
   serviceAccountSelector: ''
   egress:
     - action: Allow
-      protocol: UDP
+      protocol: TCP
       source: {}
       destination:
-        selector: k8s-app == "kube-dns"
+        selector: >-
+          (component == "apiserver"&&endpoints.projectcalico.org/serviceName ==
+          "kubernetes"&&provider == "kubernetes")
+        namespaceSelector: projectcalico.org/name == "default"
         ports:
-          - '53'
-    - action: Pass
+          - '2040'
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: ibm-system.catalog-operator
+  namespace: ibm-system
+spec:
+  tier: ibm-system
+  order: 0
+  selector: app == "catalog-operator"
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      protocol: TCP
       source: {}
-      destination: {}
-  doNotTrack: false
-  applyOnForward: false
-  preDNAT: false
+      destination:
+        selector: >-
+          (component == "apiserver"&&endpoints.projectcalico.org/serviceName ==
+          "kubernetes"&&provider == "kubernetes")
+        namespaceSelector: projectcalico.org/name == "default"
+        ports:
+          - '2040'
   types:
     - Egress
 ---
@@ -57,7 +78,7 @@ spec:
     - Egress
 ---
 apiVersion: projectcalico.org/v3
-kind: StagedNetworkPolicy
+kind: NetworkPolicy
 metadata:
   name: storefront.frontend
   namespace: storefront
@@ -100,7 +121,220 @@ spec:
     - Egress
 ---
 apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: tigera-compliance.compliance-benchmarker
+  namespace: tigera-compliance
+spec:
+  tier: tigera-compliance
+  order: 0
+  selector: k8s-app == "compliance-benchmarker"
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: >-
+          (component == "apiserver"&&endpoints.projectcalico.org/serviceName ==
+          "kubernetes"&&provider == "kubernetes")
+        namespaceSelector: projectcalico.org/name == "default"
+        ports:
+          - '2040'
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: k8s-app == "tigera-secure-es-gateway"
+        namespaceSelector: projectcalico.org/name == "tigera-elasticsearch"
+        ports:
+          - '5554'
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: tigera-elasticsearch.tigera-elasticsearch-metrics
+  namespace: tigera-elasticsearch
+spec:
+  tier: tigera-elasticsearch
+  order: 0
+  selector: k8s-app == "tigera-elasticsearch-metrics"
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: k8s-app == "tigera-secure-es-gateway"
+        ports:
+          - '5554'
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-tigera.tigera-manager
+  namespace: tigera-manager
+spec:
+  tier: allow-tigera
+  order: 0
+  selector: k8s-app == "tigera-manager"
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        ports:
+          - '9443'
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: k8s-app == "tigera-secure-es-gateway"
+        namespaceSelector: projectcalico.org/name == "tigera-elasticsearch"
+        ports:
+          - '5554'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: >-
+          (endpoints.projectcalico.org/serviceName == "kubernetes"&&provider ==
+          "kubernetes"&&component == "apiserver")
+        namespaceSelector: projectcalico.org/name == "default"
+        ports:
+          - '2040'
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: k8s-app == "compliance-server"
+        namespaceSelector: projectcalico.org/name == "tigera-compliance"
+        ports:
+          - '5443'
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
 kind: StagedNetworkPolicy
+metadata:
+  name: tigera-prometheus.calico-prometheus-operator
+  namespace: tigera-prometheus
+spec:
+  tier: tigera-prometheus
+  order: 0
+  selector: operator == "prometheus"
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: >-
+          (provider == "kubernetes"&&component ==
+          "apiserver"&&endpoints.projectcalico.org/serviceName == "kubernetes")
+        namespaceSelector: projectcalico.org/name == "default"
+        ports:
+          - '2040'
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: calico-system.es-calico-kube-controllers
+  namespace: calico-system
+spec:
+  tier: calico-system
+  order: 100
+  selector: k8s-app == "es-calico-kube-controllers"
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: k8s-app == "tigera-secure-es-gateway"
+        namespaceSelector: projectcalico.org/name == "tigera-elasticsearch"
+        ports:
+          - '5554'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: >-
+          (provider == "kubernetes"&&component ==
+          "apiserver"&&endpoints.projectcalico.org/serviceName == "kubernetes")
+        namespaceSelector: projectcalico.org/name == "default"
+        ports:
+          - '2040'
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: ibm-system.olm-operator
+  namespace: ibm-system
+spec:
+  tier: ibm-system
+  order: 100
+  selector: app == "olm-operator"
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: >-
+          (component == "apiserver"&&endpoints.projectcalico.org/serviceName ==
+          "kubernetes"&&provider == "kubernetes")
+        namespaceSelector: projectcalico.org/name == "default"
+        ports:
+          - '2040'
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
 metadata:
   name: storefront.microservice1
   namespace: storefront
@@ -190,7 +424,233 @@ spec:
     - Egress
 ---
 apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: tigera-compliance.compliance-controller
+  namespace: tigera-compliance
+spec:
+  tier: tigera-compliance
+  order: 100
+  selector: k8s-app == "compliance-controller"
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: k8s-app == "tigera-secure-es-gateway"
+        namespaceSelector: projectcalico.org/name == "tigera-elasticsearch"
+        ports:
+          - '5554'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: >-
+          (endpoints.projectcalico.org/serviceName == "kubernetes"&&provider ==
+          "kubernetes"&&component == "apiserver")
+        namespaceSelector: projectcalico.org/name == "default"
+        ports:
+          - '2040'
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: tigera-elasticsearch.tigera-secure-es
+  namespace: tigera-elasticsearch
+spec:
+  tier: tigera-elasticsearch
+  order: 100
+  selector: >-
+    (elasticsearch.k8s.elastic.co/node-data_content ==
+    "true"&&elasticsearch.k8s.elastic.co/node-data_hot ==
+    "true"&&elasticsearch.k8s.elastic.co/http-scheme ==
+    "https"&&elasticsearch.k8s.elastic.co/node-data_cold ==
+    "true"&&common.k8s.elastic.co/type ==
+    "elasticsearch"&&elasticsearch.k8s.elastic.co/node-data ==
+    "true"&&elasticsearch.k8s.elastic.co/node-data_warm ==
+    "true"&&elasticsearch.k8s.elastic.co/config-hash ==
+    "2820401245"&&elasticsearch.k8s.elastic.co/cluster-name == "tigera-secure")
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: k8s-app == "tigera-secure-es-gateway"
+      destination:
+        ports:
+          - '9200'
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: >-
+          (kibana.k8s.elastic.co/name ==
+          "tigera-secure"&&kibana.k8s.elastic.co/version == "7.11.2"&&name ==
+          "tigera-secure"&&common.k8s.elastic.co/type == "kibana"&&k8s-app ==
+          "tigera-secure"&&kibana.k8s.elastic.co/config-checksum ==
+          "fe71a22a8bd584d251a0c59706e59ed8e5481989439fbdada72e424b")
+        namespaceSelector: projectcalico.org/name == "tigera-kibana"
+      destination:
+        ports:
+          - '9200'
+  types:
+    - Ingress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-tigera.fluentd-node
+  namespace: tigera-fluentd
+spec:
+  tier: allow-tigera
+  order: 100
+  selector: k8s-app == "fluentd-node"
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: (prometheus == "calico-node-prometheus"&&app == "prometheus")
+        namespaceSelector: projectcalico.org/name == "tigera-prometheus"
+      destination:
+        ports:
+          - '9081'
+  egress:
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: k8s-app == "tigera-secure-es-gateway"
+        namespaceSelector: projectcalico.org/name == "tigera-elasticsearch"
+        ports:
+          - '5554'
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
 kind: StagedNetworkPolicy
+metadata:
+  name: tigera-prometheus.prometheus-calico-node-prometheus
+  namespace: tigera-prometheus
+spec:
+  tier: tigera-prometheus
+  order: 100
+  selector: (app == "prometheus"&&prometheus == "calico-node-prometheus")
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: k8s-app == "tigera-prometheus-api"
+      destination:
+        ports:
+          - '9090'
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: >-
+          (component == "apiserver"&&endpoints.projectcalico.org/serviceName ==
+          "kubernetes"&&provider == "kubernetes")
+        namespaceSelector: projectcalico.org/name == "default"
+        ports:
+          - '2040'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        ports:
+          - '9081'
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: StagedNetworkPolicy
+metadata:
+  name: allow-tigera.tigera-secure-kb
+  namespace: tigera-kibana
+spec:
+  tier: allow-tigera
+  order: 150
+  selector: >-
+    (kibana.k8s.elastic.co/config-checksum ==
+    "fe71a22a8bd584d251a0c59706e59ed8e5481989439fbdada72e424b"&&kibana.k8s.elastic.co/name
+    == "tigera-secure"&&kibana.k8s.elastic.co/version == "7.11.2"&&name ==
+    "tigera-secure"&&common.k8s.elastic.co/type == "kibana"&&k8s-app ==
+    "tigera-secure")
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: >-
+          (common.k8s.elastic.co/type ==
+          "elasticsearch"&&elasticsearch.k8s.elastic.co/node-data ==
+          "true"&&elasticsearch.k8s.elastic.co/cluster-name ==
+          "tigera-secure"&&elasticsearch.k8s.elastic.co/node-data_hot ==
+          "true"&&elasticsearch.k8s.elastic.co/config-hash ==
+          "2820401245"&&elasticsearch.k8s.elastic.co/http-scheme ==
+          "https"&&elasticsearch.k8s.elastic.co/node-data_cold ==
+          "true"&&elasticsearch.k8s.elastic.co/node-data_warm ==
+          "true"&&elasticsearch.k8s.elastic.co/node-data_content == "true")
+        namespaceSelector: projectcalico.org/name == "tigera-elasticsearch"
+        ports:
+          - '9200'
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: StagedNetworkPolicy
+metadata:
+  name: calico-system.default-deny-calico
+  namespace: calico-system
+spec:
+  tier: calico-system
+  order: 200
+  selector: ''
+  serviceAccountSelector: ''
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: StagedNetworkPolicy
+metadata:
+  name: ibm-system.default-deny-ibm
+  namespace: ibm-system
+spec:
+  tier: ibm-system
+  order: 200
+  selector: ''
+  serviceAccountSelector: ''
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
 metadata:
   name: storefront.microservice2
   namespace: storefront
@@ -279,6 +739,252 @@ spec:
     - Egress
 ---
 apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: tigera-compliance.compliance-server
+  namespace: tigera-compliance
+spec:
+  tier: tigera-compliance
+  order: 200
+  selector: k8s-app == "compliance-server"
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: k8s-app == "tigera-secure-es-gateway"
+        namespaceSelector: projectcalico.org/name == "tigera-elasticsearch"
+        ports:
+          - '5554'
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        namespaceSelector: projectcalico.org/namespace == "default"
+        ports:
+          - '2040'
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: tigera-elasticsearch.tigera-secure-es-gateway
+  namespace: tigera-elasticsearch
+spec:
+  tier: tigera-elasticsearch
+  order: 200
+  selector: k8s-app == "tigera-secure-es-gateway"
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: >-
+          (projectcalico.org/namespace ==
+          "calico-system"&&projectcalico.org/orchestrator ==
+          "k8s"&&projectcalico.org/serviceaccount ==
+          "calico-kube-controllers"&&k8s-app == "es-calico-kube-controllers")
+        namespaceSelector: projectcalico.org/name == "calico-system"
+      destination:
+        ports:
+          - '5554'
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: k8s-app == "compliance-benchmarker"
+        namespaceSelector: projectcalico.org/name == "tigera-compliance"
+      destination:
+        ports:
+          - '5554'
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: k8s-app == "compliance-controller"
+        namespaceSelector: projectcalico.org/name == "tigera-compliance"
+      destination:
+        ports:
+          - '5554'
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: k8s-app == "tigera-elasticsearch-metrics"
+      destination:
+        ports:
+          - '5554'
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: k8s-app == "fluentd-node"
+        namespaceSelector: projectcalico.org/name == "tigera-fluentd"
+      destination:
+        ports:
+          - '5554'
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: k8s-app == "compliance-server"
+        namespaceSelector: projectcalico.org/name == "tigera-compliance"
+      destination:
+        ports:
+          - '5554'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        ports:
+          - '5554'
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: k8s-app == "compliance-snapshotter"
+        namespaceSelector: projectcalico.org/name == "tigera-compliance"
+      destination:
+        ports:
+          - '5554'
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: k8s-app == "tigera-manager"
+        namespaceSelector: projectcalico.org/name == "tigera-manager"
+      destination:
+        ports:
+          - '5554'
+  egress:
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: >-
+          (elasticsearch.k8s.elastic.co/config-hash ==
+          "2820401245"&&elasticsearch.k8s.elastic.co/node-data_content ==
+          "true"&&elasticsearch.k8s.elastic.co/http-scheme ==
+          "https"&&elasticsearch.k8s.elastic.co/cluster-name ==
+          "tigera-secure"&&elasticsearch.k8s.elastic.co/node-data_cold ==
+          "true"&&common.k8s.elastic.co/type ==
+          "elasticsearch"&&elasticsearch.k8s.elastic.co/node-data ==
+          "true"&&elasticsearch.k8s.elastic.co/node-data_warm ==
+          "true"&&elasticsearch.k8s.elastic.co/node-data_hot == "true")
+        ports:
+          - '9200'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: >-
+          (common.k8s.elastic.co/type == "kibana"&&k8s-app ==
+          "tigera-secure"&&kibana.k8s.elastic.co/config-checksum ==
+          "fe71a22a8bd584d251a0c59706e59ed8e5481989439fbdada72e424b"&&kibana.k8s.elastic.co/name
+          == "tigera-secure"&&kibana.k8s.elastic.co/version == "7.11.2"&&name ==
+          "tigera-secure")
+        namespaceSelector: projectcalico.org/name == "tigera-kibana"
+        ports:
+          - '5601'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: >-
+          (provider == "kubernetes"&&component ==
+          "apiserver"&&endpoints.projectcalico.org/serviceName == "kubernetes")
+        namespaceSelector: projectcalico.org/name == "default"
+        ports:
+          - '2040'
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-tigera.intrusion-detection-controller
+  namespace: tigera-intrusion-detection
+spec:
+  tier: allow-tigera
+  order: 200
+  selector: k8s-app == "intrusion-detection-controller"
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: >-
+          (component == "apiserver"&&endpoints.projectcalico.org/serviceName ==
+          "kubernetes"&&provider == "kubernetes")
+        namespaceSelector: projectcalico.org/name == "default"
+        ports:
+          - '2040'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: k8s-app == "tigera-secure-es-gateway"
+        namespaceSelector: projectcalico.org/name == "tigera-elasticsearch"
+        ports:
+          - '5554'
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: tigera-prometheus.tigera-prometheus-api
+  namespace: tigera-prometheus
+spec:
+  tier: tigera-prometheus
+  order: 200
+  selector: k8s-app == "tigera-prometheus-api"
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: >-
+          (app == "vpn"&&dashboard-metrics-scraper-policy ==
+          "allow"&&kubernetes-dashboard-policy == "allow")
+        namespaceSelector: projectcalico.org/name == "kube-system"
+      destination:
+        ports:
+          - '9090'
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: (app == "prometheus"&&prometheus == "calico-node-prometheus")
+        ports:
+          - '9090'
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
 kind: StagedNetworkPolicy
 metadata:
   name: product.default-deny-storefront
@@ -293,7 +999,7 @@ spec:
     - Egress
 ---
 apiVersion: projectcalico.org/v3
-kind: StagedNetworkPolicy
+kind: NetworkPolicy
 metadata:
   name: storefront.logging
   namespace: storefront
@@ -321,7 +1027,113 @@ spec:
     - Ingress
 ---
 apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: tigera-compliance.compliance-snapshotter
+  namespace: tigera-compliance
+spec:
+  tier: tigera-compliance
+  order: 300
+  selector: k8s-app == "compliance-snapshotter"
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: k8s-app == "tigera-secure-es-gateway"
+        namespaceSelector: projectcalico.org/name == "tigera-elasticsearch"
+        ports:
+          - '5554'
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-tigera.elastic-operator
+  namespace: tigera-eck-operator
+spec:
+  tier: allow-tigera
+  order: 300
+  selector: (k8s-app == "elastic-operator"&&control-plane == "elastic-operator")
+  serviceAccountSelector: ''
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: >-
+          (component == "apiserver"&&endpoints.projectcalico.org/serviceName ==
+          "kubernetes"&&provider == "kubernetes")
+        namespaceSelector: projectcalico.org/name == "default"
+        ports:
+          - '2040'
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
 kind: StagedNetworkPolicy
+metadata:
+  name: tigera-elasticsearch.default-deny-elasticsearch
+  namespace: tigera-elasticsearch
+spec:
+  tier: tigera-elasticsearch
+  order: 300
+  selector: ''
+  serviceAccountSelector: ''
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: tigera-prometheus.alertmanager-calico-node-alertmanager
+  namespace: tigera-prometheus
+spec:
+  tier: tigera-prometheus
+  order: 300
+  selector: (alertmanager == "calico-node-alertmanager"&&app == "alertmanager")
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: (alertmanager == "calico-node-alertmanager"&&app == "alertmanager")
+      destination:
+        ports:
+          - '9094'
+  egress:
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: (alertmanager == "calico-node-alertmanager"&&app == "alertmanager")
+        ports:
+          - '9094'
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
 metadata:
   name: storefront.backend
   namespace: storefront
@@ -361,6 +1173,138 @@ spec:
         selector: app == "logging"
         ports:
           - '8080'
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: StagedNetworkPolicy
+metadata:
+  name: tigera-compliance.default-deny-compliance
+  namespace: tigera-compliance
+spec:
+  tier: tigera-compliance
+  order: 400
+  selector: ''
+  serviceAccountSelector: ''
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: StagedNetworkPolicy
+metadata:
+  name: tigera-prometheus.default-deny-prometheus
+  namespace: tigera-prometheus
+spec:
+  tier: tigera-prometheus
+  order: 400
+  selector: ''
+  serviceAccountSelector: ''
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: storefront.default-deny-storefront
+  namespace: storefront
+spec:
+  tier: storefront
+  order: 500
+  selector: ''
+  serviceAccountSelector: ''
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: storefront.acme-microservice1
+  namespace: acme
+spec:
+  tier: storefront
+  order: 600
+  selector: app == "acme-microservice1"
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: app == "acme-microservice2"
+      destination:
+        ports:
+          - '8080'
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: app == "acme-microservice2"
+        ports:
+          - '8080'
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: storefront.acme-microservice2
+  namespace: acme
+spec:
+  tier: storefront
+  order: 700
+  selector: app == "acme-microservice2"
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        selector: app == "acme-microservice1"
+      destination:
+        ports:
+          - '8080'
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: app == "acme-microservice1"
+        ports:
+          - '8080'
+    - action: Allow
+      protocol: UDP
+      source: {}
+      destination:
+        selector: k8s-app == "kube-dns"
+        namespaceSelector: projectcalico.org/name == "kube-system"
+        ports:
+          - '53'
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: storefront.default-deny-acme
+  namespace: acme
+spec:
+  tier: storefront
+  order: 800
+  selector: ''
+  serviceAccountSelector: ''
   types:
     - Ingress
     - Egress
@@ -411,7 +1355,7 @@ metadata:
   name: default.allow-icmp
 spec:
   tier: default
-  order: 1100
+  order: 1500
   selector: 'ibm.role in { "worker_public", "master_public" }'
   namespaceSelector: ''
   serviceAccountSelector: ''
@@ -432,7 +1376,7 @@ metadata:
   name: default.allow-node-port-dnat
 spec:
   tier: default
-  order: 1200
+  order: 1500
   selector: ibm.role == "worker_public"
   namespaceSelector: ''
   serviceAccountSelector: ''
@@ -454,7 +1398,7 @@ metadata:
   name: default.allow-vrrp
 spec:
   tier: default
-  order: 1300
+  order: 1500
   selector: ibm.role == "worker_public"
   namespaceSelector: ''
   serviceAccountSelector: ''
@@ -481,7 +1425,7 @@ metadata:
   name: default.allow-all-outbound
 spec:
   tier: default
-  order: 1400
+  order: 1900
   selector: 'ibm.role in { "worker_public", "master_public" }'
   namespaceSelector: ''
   serviceAccountSelector: ''
@@ -501,7 +1445,7 @@ metadata:
   name: default.allow-bigfix-port
 spec:
   tier: default
-  order: 1600
+  order: 1900
   selector: 'ibm.role in { "worker_public", "master_public" }'
   namespaceSelector: ''
   serviceAccountSelector: ''
@@ -527,10 +1471,35 @@ spec:
 apiVersion: projectcalico.org/v3
 kind: GlobalNetworkPolicy
 metadata:
+  name: default.allow-all-private-default
+spec:
+  tier: default
+  order: 1925
+  selector: ibm.role == "worker_private"
+  namespaceSelector: ''
+  serviceAccountSelector: ''
+  ingress:
+    - action: Allow
+      source: {}
+      destination: {}
+  egress:
+    - action: Allow
+      source: {}
+      destination: {}
+  doNotTrack: false
+  applyOnForward: false
+  preDNAT: false
+  types:
+    - Egress
+    - Ingress
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
   name: default.allow-sys-mgmt
 spec:
   tier: default
-  order: 1700
+  order: 1950
   selector: 'ibm.role in { "worker_public", "master_public" }'
   namespaceSelector: ''
   serviceAccountSelector: ''
@@ -603,29 +1572,4 @@ spec:
   applyOnForward: false
   preDNAT: false
   types:
-    - Ingress
----
-apiVersion: projectcalico.org/v3
-kind: GlobalNetworkPolicy
-metadata:
-  name: default.allow-all-private-default
-spec:
-  tier: default
-  order: 1800
-  selector: ibm.role == "worker_private"
-  namespaceSelector: ''
-  serviceAccountSelector: ''
-  ingress:
-    - action: Allow
-      source: {}
-      destination: {}
-  egress:
-    - action: Allow
-      source: {}
-      destination: {}
-  doNotTrack: false
-  applyOnForward: false
-  preDNAT: false
-  types:
-    - Egress
     - Ingress
