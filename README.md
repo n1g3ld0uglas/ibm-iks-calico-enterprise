@@ -1,5 +1,8 @@
 # Upgrade IKS Cluster from Calico OSS to Calico Enterprise
 
+Quick note: It's better to ```UPGRADE``` from OSS Calico to CaliEnt - and not to ```INSTALL``` CaliEnt on top of Calico OSS: <br/>
+https://docs.tigera.io/v3.10/maintenance/upgrade-to-tsee
+
 ## Setting environmental variables
 
 Finding the zones for the classic provider
