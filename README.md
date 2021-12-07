@@ -101,6 +101,11 @@ Install the Tigera ```Custom Resources Defintions``` (CRD's):
 kubectl apply -f https://docs.tigera.io/manifests/custom-resources.yaml
 ```
 
+Alternatively, apply the below ```Custom Resource Upgrade``` manifest from the upgrade guides:
+```
+kubectl apply -f https://docs.tigera.io/v3.11/manifests/custom-resources-upgrade-from-calico.yaml
+```
+
 <img width="1187" alt="Screenshot 2021-10-25 at 21 35 21" src="https://user-images.githubusercontent.com/82048393/138766927-f5396f1f-718b-4b1c-be41-826eaf2ce3f3.png">
 
 You can now monitor progress with the following command:
