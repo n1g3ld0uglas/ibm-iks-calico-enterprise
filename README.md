@@ -3,64 +3,23 @@
 Quick note: It's better to ```UPGRADE``` from OSS Calico to CaliEnt - and not to ```INSTALL``` CaliEnt on top of Calico OSS: <br/>
 https://docs.tigera.io/v3.10/maintenance/upgrade-to-tsee
 
-## Setting environmental variables
 
-Finding the zones for the classic provider
-```
-ibmcloud ks zone ls --provider classic
-```
-
-Finding the flavours in the Amsterdam zone
-
-```
-ibmcloud ks flavors --zone ams03
-```
-
-Using ```b3c.4x16``` because it has 4 cores with 16GB of memory:
-
-```
-ibmcloud ks flavors --zone ams03
-```
-
-Get the level of permissions assigned to the user
-```
-ibmcloud ks infra-permissions get
-```
-
-These commands help you gather the information that you need to create a virtual server instance: <br/>
-https://cloud.ibm.com/vpc-ext/overview
-
-
-## Miscellaneous
-
-```
-ibmcloud is vpcs
-```
-```
-ibmcloud is subnets
-```
-
-## Installing the cluster in Cloud Shell
-
-Default Script:
-```
-ibmcloud ks cluster create --location dal10 --public-vlan <public_vlan_id> --private-vlan <private_vlan_id> --machine-type b2c.4x16 --workers 3 --name <cluster_name>
-```
-
-#### My Finished Script:
+#### Create cluster via IBM cloud shell
 ```
 ibmcloud ks cluster create vpc-gen2 --flavor b3c.4x16 --zone ams03 --workers 3 --name nigel-iks-cluster
 ```
 
-#### Work in-pogress:
-```
-ibmcloud ks cluster create vpc-classic --flavor b3c.4x16 --subnet-id 02c7-eef06d9a-650e-4d37-ba61-82cf598ae6af --vpc-id r010-850fb416-7cf7-4381-947e-881c3971ef79 --zone eu-de-1,eu-de-2,eu-de-3 --workers 3 --name nigel-icleks-cluster
-```
+#### Create cluster via the web builder
+Tested with a ```VPC``` cluster type for a single ```worker zone```
+![Screenshot 2021-12-07 at 17 12 26](https://user-images.githubusercontent.com/82048393/145075535-b90911ac-265a-431f-9d52-4aae464e4fc4.png)
 
-<img width="1269" alt="Screenshot 2021-10-25 at 20 38 21" src="https://user-images.githubusercontent.com/82048393/138759272-ab4bff54-ee96-440d-bc4e-4a292620a451.png">
+To meet the Calico Enterprise minimum prerequisite, I gave my ```worker pool``` 16GB of memory and 4 vCPU's:
+![Screenshot 2021-12-07 at 17 13 39](https://user-images.githubusercontent.com/82048393/145075710-e3c9e1fb-9712-4359-a03a-5058951053be.png)
 
-Wait for all worker nodes to be in a Ready status for Calico changes to be accepted:
+To reduce costs, I also recommend ```disabling integrations``` that are unwanted (such as logging and monitoring):
+![Screenshot 2021-12-07 at 17 14 04](https://user-images.githubusercontent.com/82048393/145075814-80838984-c673-4809-9427-f8830f3986be.png)
 
+Wait for all worker nodes to be in a ```Ready``` status for Calico changes to be accepted:
 <img width="1269" alt="Screenshot 2021-10-25 at 20 54 29" src="https://user-images.githubusercontent.com/82048393/138761486-7a49b94a-c1d4-4419-91d6-5bbf50d43cf5.png">
 
 
