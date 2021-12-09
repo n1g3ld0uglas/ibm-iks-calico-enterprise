@@ -44,6 +44,14 @@ kubectl apply -f calico.yaml
 
 <img width="888" alt="Screenshot 2021-10-25 at 21 03 48" src="https://user-images.githubusercontent.com/82048393/138762722-28ac7df1-e0fa-4ca0-bf30-9d5b1073fe97.png">
 
+Run the below command and wait for the ```calico-typha``` pods to be created into the ```kube-system``` namespace:
+
+```
+kubectl get pods -A -w
+```
+
+This could take between 2/3 mins to complete
+
 #### Setup paste option in VIM
 
 ```
