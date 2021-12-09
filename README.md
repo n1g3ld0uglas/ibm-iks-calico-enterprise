@@ -138,7 +138,7 @@ kubectl create -f license.yaml
 Check all pods are still creating:
 
 ```
-kubectl get pods -A
+kubectl get pods -A -w
 ```
 
 <img width="807" alt="Screenshot 2021-10-25 at 21 44 57" src="https://user-images.githubusercontent.com/82048393/138768253-4f2c2c77-4b83-4af9-9ab4-7f064ab67eba.png">
@@ -188,6 +188,7 @@ The outcome should look something like the below:
 
 <img width="501" alt="Screenshot 2021-10-25 at 21 57 35" src="https://user-images.githubusercontent.com/82048393/138769861-a790b927-dd64-440c-95a6-35be80374aea.png">
 
+Double-check that pods aren't ```crashing``` or reverting back to a ```PodInitializing``` status
 
 <img width="839" alt="Screenshot 2021-10-25 at 21 58 52" src="https://user-images.githubusercontent.com/82048393/138769957-0d913c6e-ea9d-45be-9651-bd524b4530a6.png">
 
