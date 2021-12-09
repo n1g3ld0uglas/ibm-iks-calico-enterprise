@@ -176,10 +176,14 @@ spec:
 <img width="1467" alt="Screenshot 2021-10-25 at 21 51 43" src="https://user-images.githubusercontent.com/82048393/138769121-1621c28e-6e0a-4a92-914f-863f2d6ef724.png">
 
 
-Confirm the new pods are getting created after the persistent volume changes:
+Confirm the new persistent volume claim is in a ```BOUND``` status:
 ``` 
-kubectl get pods -A
+kubectl get pvc -A -w
 ```
+
+A persistent volume claim (PVC) is a request for storage, which is met by binding the PVC to a persistent volume (PV). <br/>
+This PVC provides an abstraction layer to the underlying storage. <br/>
+https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengcreatingpersistentvolumeclaim.htm
 
 <img width="1467" alt="Screenshot 2021-10-25 at 21 53 09" src="https://user-images.githubusercontent.com/82048393/138769331-85f1f4ca-0077-4d52-8ea7-f3c3badc506e.png">
 
