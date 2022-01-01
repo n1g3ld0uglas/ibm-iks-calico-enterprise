@@ -420,3 +420,37 @@ ibmcloud ks worker-pool resize --cluster nigel-iks-ce-test --worker-pool nigel-w
 
 <img width="914" alt="Screenshot 2021-11-11 at 21 59 42" src="https://user-images.githubusercontent.com/82048393/141374980-dffd4c11-b88c-4f2a-b767-939dabd446f0.png">
 
+## Pull Images for Private Repo:
+Move Calico Enterprise container images to a private registry and configure Calico Enterprise to pull images from it:
+<br/>
+https://docs.tigera.io/getting-started/private-registry/private-registry-regular
+
+Add tigera-pull-secret into the namespace tigera-internal:
+```
+kubectl create secret generic tigera-pull-secret --from-file=.dockerconfigjson=<pull-secrets.json> --type=kubernetes.io/dockerconfigjson -n tigera-internal
+```
+
+Apply the following manifest to create a namespace and RBAC for the honeypods:
+```
+kubectl apply -f https://docs.tigera.io/manifests/threatdef/honeypod/common.yaml 
+```
+
+#### IP Enumeration
+```
+kubectl apply -f https://docs.tigera.io/manifests/threatdef/honeypod/ip-enum.yaml 
+```
+
+#### Nginx Service
+```
+kubectl apply -f https://docs.tigera.io/manifests/threatdef/honeypod/expose-svc.yaml 
+```
+
+Verify the Honeypods are deployed:
+```
+kubectl get pods -n tigera-internal
+```
+
+And verify that global alerts are set for honeypods:
+```
+kubectl get globalalerts
+```
