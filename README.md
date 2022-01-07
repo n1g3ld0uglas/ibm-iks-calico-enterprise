@@ -286,6 +286,12 @@ Once logged in, you can configure users and their privileges from the settings p
 
 <img width="1448" alt="Screenshot 2021-10-25 at 22 25 34" src="https://user-images.githubusercontent.com/82048393/138773268-c81858f0-b5e8-4867-95d5-e6bd03a4ed88.png">
 
+#### Secure Calico Enterprise with network policy
+Install the following network policies to secure Calico Enterprise component communications.
+```
+kubectl create -f https://docs.tigera.io/manifests/tigera-policies.yaml
+```
+
 #### Introduce a test application into your environment:
 
 If your cluster does not have applications, you can use the following ```storefront``` application:
