@@ -76,6 +76,48 @@ volumeBindingMode: WaitForFirstConsumer
 
 <img width="1103" alt="Screenshot 2021-10-25 at 21 10 13" src="https://user-images.githubusercontent.com/82048393/138763590-6847207b-a169-46da-acff-9dac600f3dec.png">
 
+If not an issue with pods creating, check the persistent volume claim status:
+
+```
+kubectl get pvc -A
+```
+
+<img width="1082" alt="Screenshot 2021-10-25 at 21 47 31" src="https://user-images.githubusercontent.com/82048393/138768519-fd55f60f-6d40-4518-8af2-f928c13c787e.png">
+
+
+
+#### Persistent Volume:
+A PV is a virtual storage instance that is added as a volume to the cluster: <br/>
+https://cloud.ibm.com/docs/containers?topic=containers-kube_concepts
+
+```
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: elasticsearch-data-tigera-secure-es-7f5dee596fef130f-0
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /var/tigera/elastic-data/1
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: tigera-elasticsearch
+```  
+
+<img width="1467" alt="Screenshot 2021-10-25 at 21 51 43" src="https://user-images.githubusercontent.com/82048393/138769121-1621c28e-6e0a-4a92-914f-863f2d6ef724.png">
+
+
+Confirm the new persistent volume claim is in a ```BOUND``` status:
+``` 
+kubectl get pvc -A -w
+```
+
+A persistent volume claim (PVC) is a request for storage, which is met by binding the PVC to a persistent volume (PV). <br/>
+This PVC provides an abstraction layer to the underlying storage. <br/>
+https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengcreatingpersistentvolumeclaim.htm
+
 Install the ```Tigera Operator``` and custom resource definitions:
 
 ```
@@ -142,48 +184,6 @@ kubectl get pods -A -w
 ```
 
 <img width="807" alt="Screenshot 2021-10-25 at 21 44 57" src="https://user-images.githubusercontent.com/82048393/138768253-4f2c2c77-4b83-4af9-9ab4-7f064ab67eba.png">
-
-If not an issue with pods creating, check the persistent volume claim status:
-
-```
-kubectl get pvc -A
-```
-
-<img width="1082" alt="Screenshot 2021-10-25 at 21 47 31" src="https://user-images.githubusercontent.com/82048393/138768519-fd55f60f-6d40-4518-8af2-f928c13c787e.png">
-
-
-
-#### Persistent Volume:
-A PV is a virtual storage instance that is added as a volume to the cluster: <br/>
-https://cloud.ibm.com/docs/containers?topic=containers-kube_concepts
-
-```
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: elasticsearch-data-tigera-secure-es-7f5dee596fef130f-0
-spec:
-  capacity:
-    storage: 100Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: /var/tigera/elastic-data/1
-  persistentVolumeReclaimPolicy: Recycle
-  storageClassName: tigera-elasticsearch
-```  
-
-<img width="1467" alt="Screenshot 2021-10-25 at 21 51 43" src="https://user-images.githubusercontent.com/82048393/138769121-1621c28e-6e0a-4a92-914f-863f2d6ef724.png">
-
-
-Confirm the new persistent volume claim is in a ```BOUND``` status:
-``` 
-kubectl get pvc -A -w
-```
-
-A persistent volume claim (PVC) is a request for storage, which is met by binding the PVC to a persistent volume (PV). <br/>
-This PVC provides an abstraction layer to the underlying storage. <br/>
-https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengcreatingpersistentvolumeclaim.htm
 
 <img width="1467" alt="Screenshot 2021-10-25 at 21 53 09" src="https://user-images.githubusercontent.com/82048393/138769331-85f1f4ca-0077-4d52-8ea7-f3c3badc506e.png">
 
