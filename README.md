@@ -290,10 +290,11 @@ Install the following network policies to secure Calico Enterprise component com
 kubectl create -f https://docs.tigera.io/manifests/tigera-policies.yaml
 ```
 
-#### Create a management cluster
+## Create a management cluster
 To control managed clusters from your central management plane, you must ensure it is reachable for connections. <br/>
 The simplest way to get started (but not for production scenarios), is to configure a NodePort service to expose the management cluster. <br/> 
-Note that the service must live within the tigera-manager namespace.
+Note that the service must live within the tigera-manager namespace. <br/>
+https://docs.tigera.io/multicluster/mcm/create-a-management-cluster
 
 ```
 apiVersion: v1
@@ -341,11 +342,76 @@ kubectl get secret $(kubectl get serviceaccount mcm-user -o jsonpath='{range .se
 
 ```
 
+## Create a managed cluster
+
+Follow these steps in the cluster you intend to use as the managed cluster. <br/>
+https://docs.tigera.io/multicluster/mcm/create-a-managed-cluster
+
+#### Download the Tigera custom resources (For Modification)
+
+```
+curl -O -L https://docs.tigera.io/manifests/custom-resources.yaml
+```
+
+Remove the Manager custom resource from the manifest file.
+```
+apiVersion: operator.tigera.io/v1
+kind: Manager
+metadata:
+  name: tigera-secure
+spec:
+  # Authentication configuration for accessing the Tigera manager.
+  # Default is to use token-based authentication.
+  auth:
+    type: Token
+```
+
+Remove the LogStorage custom resource from the manifest file.
+
+```
+apiVersion: operator.tigera.io/v1
+kind: LogStorage
+metadata:
+  name: tigera-secure
+spec:
+  nodes:
+    count: 1
+```
+
+Now apply the modified manifest:
+
+```
+kubectl create -f ./custom-resources.yaml
+```
+
+You can now monitor progress with the following command:
+```
+watch kubectl get tigerastatus
+```
+
+Wait until the apiserver shows a status of Available, then proceed to the next section.
+
+#### Create the connection manifest for your managed cluster:
+
+Because you will eventually have several managed clusters, choose a name that can be easily recognized in a list of managed clusters.
+
+```
+export MANAGED_CLUSTER=my-managed-cluster
+```
+
+Add a managed cluster and save the manifest containing a ManagementClusterConnection and a Secret:
+```
+kubectl -o jsonpath="{.spec.installationManifest}" > $MANAGED_CLUSTER.yaml create -f - <<EOF
+apiVersion: projectcalico.org/v3
+kind: ManagedCluster
+metadata:
+  name: $MANAGED_CLUSTER
+EOF
+```
 
 
 
-
-#### Introduce a test application into your environment:
+## Introduce a test application into your environment:
 
 If your cluster does not have applications, you can use the following ```storefront``` application:
 ```
