@@ -10,8 +10,6 @@ ibmcloud ks cluster create vpc-gen2 --flavor b3c.4x16 --zone ams03 --workers 3 -
 ```
 
 #### Create cluster via the web builder
-Tested with a ```VPC``` cluster type for a single ```worker zone```
-![Screenshot 2021-12-07 at 17 12 26](https://user-images.githubusercontent.com/82048393/145075535-b90911ac-265a-431f-9d52-4aae464e4fc4.png)
 
 To meet the Calico Enterprise minimum prerequisite, I gave my ```worker pool``` 16GB of memory and 4 vCPU's:
 ![Screenshot 2021-12-07 at 17 13 39](https://user-images.githubusercontent.com/82048393/145075710-e3c9e1fb-9712-4359-a03a-5058951053be.png)
@@ -291,6 +289,55 @@ Install the following network policies to secure Calico Enterprise component com
 ```
 kubectl create -f https://docs.tigera.io/manifests/tigera-policies.yaml
 ```
+
+#### Create a management cluster
+To control managed clusters from your central management plane, you must ensure it is reachable for connections. <br/>
+The simplest way to get started (but not for production scenarios), is to configure a NodePort service to expose the management cluster. <br/> 
+Note that the service must live within the tigera-manager namespace.
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: tigera-manager-mcm
+  namespace: tigera-manager
+spec:
+  ports:
+  - nodePort: 30449
+    port: 9449
+    protocol: TCP
+    targetPort: 9449
+  selector:
+    k8s-app: tigera-manager
+  type: NodePort
+```
+
+
+
+
+Export the service port number, and the public IP or host of the management cluster.
+```
+export MANAGEMENT_CLUSTER_ADDR=<your-management-cluster-addr>:9443
+```
+
+Apply the ManagementCluster Custom Resource (CR):
+```
+apiVersion: operator.tigera.io/v1
+kind: ManagementCluster
+metadata:
+  name: tigera-secure
+spec:
+  address: $MANAGEMENT_CLUSTER_ADDR
+```
+
+
+
+
+
+
+
+
+
 
 #### Introduce a test application into your environment:
 
