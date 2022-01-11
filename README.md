@@ -353,7 +353,7 @@ https://docs.tigera.io/multicluster/mcm/create-a-managed-cluster
 curl -O -L https://docs.tigera.io/manifests/custom-resources.yaml
 ```
 
-Remove the Manager custom resource from the manifest file.
+Remove the ```Manager``` custom resource from the manifest file.
 ```
 apiVersion: operator.tigera.io/v1
 kind: Manager
@@ -366,7 +366,7 @@ spec:
     type: Token
 ```
 
-Remove the LogStorage custom resource from the manifest file.
+Remove the ```LogStorage``` custom resource from the manifest file.
 
 ```
 apiVersion: operator.tigera.io/v1
@@ -389,7 +389,7 @@ You can now monitor progress with the following command:
 watch kubectl get tigerastatus
 ```
 
-Wait until the apiserver shows a status of Available, then proceed to the next section.
+Wait until the ```apiserver``` shows a status of Available, then proceed to the next section.
 
 #### Create the connection manifest for your managed cluster:
 
@@ -409,9 +409,28 @@ metadata:
 EOF
 ```
 
+Verify that the ```managementClusterAddr``` in the manifest is correct.
 
 
-## Introduce a test application into your environment:
+#### Apply the connection manifest to your managed cluster:
+
+Apply the manifest that you modified in the step, Add a managed cluster to the management cluster.
+```
+kubectl apply -f $MANAGED_CLUSTER.yaml
+```
+
+Monitor progress with the following command:
+```
+watch kubectl get tigerastatus
+```
+Wait until the ```management-cluster-connection``` and ```tigera-compliance``` show a status of Available.
+
+#### Provide permissions to view the managed cluster:
+```
+kubectl create clusterrolebinding mcm-user-admin --serviceaccount=default:mcm-user --clusterrole=tigera-network-admin
+```
+
+## Introduce a test application into your environment
 
 If your cluster does not have applications, you can use the following ```storefront``` application:
 ```
