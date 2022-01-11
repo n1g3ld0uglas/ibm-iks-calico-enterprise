@@ -330,10 +330,16 @@ spec:
   address: $MANAGEMENT_CLUSTER_ADDR
 ```
 
+#### Create an admin user and verify management cluster connection
 
+Create an admin user called, mcm-user in the default namespace with full permissions, by applying the following commands.
 
+```
+kubectl create sa mcm-user
+kubectl create clusterrolebinding mcm-user-admin --serviceaccount=default:mcm-user --clusterrole=tigera-network-admin
+kubectl get secret $(kubectl get serviceaccount mcm-user -o jsonpath='{range .secrets[*]}{.name}{"\n"}{end}' | grep token) -o go-template='{{.data.token | base64decode}}' && echo
 
-
+```
 
 
 
