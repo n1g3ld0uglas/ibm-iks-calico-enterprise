@@ -663,3 +663,11 @@ metadata:
 spec:
   selector: zone == "dmz"
 ```
+
+## IBM IKS clusters should also connect with Calico Cloud
+
+Prerequisite checks are much the same for Calico Cloud as they are for Calico Enterprise: <br/>
+https://docs.calicocloud.io/operations/connect/gke#prerequisites
+
+
+![Screenshot 2022-01-12 at 09 19 10](https://user-images.githubusercontent.com/82048393/149100496-dcb40f36-2711-4ede-a854-21b0fa48c863.png)
