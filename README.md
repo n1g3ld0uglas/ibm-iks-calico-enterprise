@@ -704,6 +704,12 @@ spec:
     labels:
       threatfeed: vpn-ejr
 ```
+
+Applies to anything that IS NOT listed with the namespace selector = 'acme' 
+
+```
+kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/threatfeed/block-feodo.yaml
+```
   
 ## Configuring Honeypods
 
