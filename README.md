@@ -671,3 +671,63 @@ https://docs.calicocloud.io/operations/connect/gke#prerequisites
 
 
 ![Screenshot 2022-01-12 at 09 19 10](https://user-images.githubusercontent.com/82048393/149100496-dcb40f36-2711-4ede-a854-21b0fa48c863.png)
+
+## Anonymization Attacks:  
+Create the threat feed for ```KNOWN-MALWARE``` which we can then block with network policy: 
+``` 
+kubectl apply -f https://raw.githubusercontent.com/n1g3ld0uglas/EuroEKSClusterCC/main/malware-ipfeed.yaml
+```
+
+Create the threat feed for ```Tor Bulk Exit``` Nodes: 
+
+``` 
+kubectl apply -f https://docs.tigera.io/manifests/threatdef/tor-exit-feed.yaml
+```
+
+Additionally, feeds can be checked using following command:
+
+``` 
+kubectl get globalthreatfeeds 
+```
+
+As you can see from the below example, it's making a pull request from a dynamic feed and labelling it - so we have a static selector for the feed:
+```
+apiVersion: projectcalico.org/v3
+kind: GlobalThreatFeed
+metadata:
+  name: vpn-ejr
+spec:
+  pull:
+    http:
+      url: https://raw.githubusercontent.com/n1g3ld0uglas/EuroEKSClusterCC/main/ejrfeed.txt
+  globalNetworkSet:
+    labels:
+      threatfeed: vpn-ejr
+```
+  
+## Configuring Honeypods
+
+Create the Tigera-Internal namespace and alerts for the honeypod services:
+
+```
+kubectl apply -f https://docs.tigera.io/manifests/threatdef/honeypod/common.yaml
+```
+
+Expose a vulnerable SQL service that contains an empty database with easy access.<br/>
+The pod can be discovered via ClusterIP or DNS lookup:
+
+```
+kubectl apply -f https://docs.tigera.io/manifests/threatdef/honeypod/vuln-svc.yaml 
+```
+
+Verify the deployment - ensure that honeypods are running within the tigera-internal namespace:
+
+```
+kubectl get pods -n tigera-internal -o wide
+```
+
+And verify that global alerts are set for honeypods:
+
+```
+kubectl get globalalerts
+```
