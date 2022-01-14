@@ -709,7 +709,7 @@ Applies to anything that IS NOT listed with the namespace selector = 'acme'
 kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/threatfeed/block-feodo.yaml
 ```
   
-## Configuring Honeypods
+## Setup for Honeypods testing
 
 Create the Tigera-Internal namespace and alerts for the honeypod services:
 
@@ -717,9 +717,25 @@ Create the Tigera-Internal namespace and alerts for the honeypod services:
 kubectl apply -f https://docs.tigera.io/manifests/threatdef/honeypod/common.yaml
 ```
 
+Add tigera-pull-secret into the namespace tigera-internal:
+```
+kubectl create secret generic tigera-pull-secret --from-file=.dockerconfigjson=<pull-secrets.json> --type=kubernetes.io/dockerconfigjson -n tigera-internal
+```
+
+#### Pulling Images for the Honeypods
+Expose an empty pod that can only be reached via PodIP; this allows you to see when the attacker is probing the pod network:
+```
+kubectl apply -f https://docs.tigera.io/manifests/threatdef/honeypod/ip-enum.yaml
+```
+
+Expose a nginx service that serves a generic page. The pod can be discovered via ClusterIP or DNS lookup. <br/>
+An unreachable service tigera-dashboard-internal-service is created to entice the attacker to find and reach, tigera-dashboard-internal-debug:
+```
+kubectl apply -f https://docs.tigera.io/manifests/threatdef/honeypod/expose-svc.yaml 
+```
+
 Expose a vulnerable SQL service that contains an empty database with easy access.<br/>
 The pod can be discovered via ClusterIP or DNS lookup:
-
 ```
 kubectl apply -f https://docs.tigera.io/manifests/threatdef/honeypod/vuln-svc.yaml 
 ```
