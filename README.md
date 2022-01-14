@@ -483,8 +483,7 @@ spec:
   ingress:
     - action: Allow
       source:
-        nets:
-          - 18.0.0.0/16
+        selector: ipset == "internal"
       destination: {}
     - action: Deny
       source: {}
