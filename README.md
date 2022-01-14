@@ -736,3 +736,10 @@ And verify that global alerts are set for honeypods:
 ```
 kubectl get globalalerts
 ```
+
+## Cache Refresh
+```
+kubectl patch felixconfiguration.p default -p '{"spec":{"flowLogsFlushInterval":"10s"}}'
+kubectl patch felixconfiguration.p default -p '{"spec":{"dnsLogsFlushInterval":"10s"}}'
+kubectl patch felixconfiguration.p default -p '{"spec":{"flowLogsFileAggregationKindForAllowed":1}}
+```
