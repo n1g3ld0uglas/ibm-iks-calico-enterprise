@@ -788,6 +788,37 @@ spec:
 EOF
 ```
 
+#### Add honeypod controller to cluster
+
+Add the honeypod controller to each cluster configured for honeypods using the following command:
+```
+kubectl apply -f https://docs.tigera.io/manifests/threatdef/honeypod/controller.yaml
+```
+#### Add custom Snort rules
+
+You can add custom Snort rules to the controller using a ConfigMap: <br/>
+https://docs.tigera.io/threat/honeypod/honeypod-controller <br/>
+<br/>
+By default, Calico Enterprise uses the Snort Community Ruleset:
+https://www.snort.org/downloads/#rule-downloads <br/>
+<br/>
+The following manifest provides the method to add individual custom signatures:
+```
+kubectl create -f - <<EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: localrule
+  namespace: tigera-intrusion-detection
+data:
+  rules: |
+    alert icmp any any -> any any (msg:"ICMP Echo Request"; itype:8; sid:1000000;)
+    alert icmp any any -> any any (msg:"ICMP Echo Reply"; itype:0; sid:1000001;)
+EOF
+```
+
+
+
 ## Cache Refresh
 ```
 kubectl patch felixconfiguration.p default -p '{"spec":{"flowLogsFlushInterval":"10s"}}'
