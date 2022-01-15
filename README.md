@@ -754,17 +754,17 @@ And verify that global alerts are set for honeypods:
 kubectl get globalalerts
 ```
 
-As an example, to trigger an alert for honeypod.ip.enum, first get the Pod IP for one of the honeypods:
+As an example, to trigger an alert for ```honeypod.ip.enum```, first get the Pod IP for one of the honeypods:
 ```
 kubectl get pod tigera-internal-app-28c85 -n tigera-internal -ojsonpath='{.status.podIP}'
 ```
-Then, run a busybox container with the command ping on the honeypod IP:
+Then, run a ```busybox``` container with the command ping on the honeypod IP:
 ```
 kubectl run --restart=Never --image busybox ping-runner -- ping -c1 <honeypod IP>
 ``` 
 If the ICMP request reaches the honeypod, an alert will be generated within 5 minutes.<br/>
 <br/>
-After you have verified that the honeypods are installed and working, a best practice is to remove the pull secret from the namespace:
+After you have verified that the honeypods are installed and working, a best practice is to ```remove the pull secret``` from the namespace:
 ```
 kubectl delete secret tigera-pull-secret -n tigera-internal
 ```
