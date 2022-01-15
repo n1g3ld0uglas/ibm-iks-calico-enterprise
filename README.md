@@ -711,7 +711,8 @@ kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-pa
   
 ## Setup for Honeypods testing
 
-Create the Tigera-Internal namespace and alerts for the honeypod services:
+Create the Tigera-Internal namespace and alerts for the honeypod services: <br/>
+https://docs.tigera.io/threat/honeypod/honeypods
 
 ```
 kubectl apply -f https://docs.tigera.io/manifests/threatdef/honeypod/common.yaml
@@ -767,6 +768,24 @@ If the ICMP request reaches the honeypod, an alert will be generated within 5 mi
 After you have verified that the honeypods are installed and working, a best practice is to ```remove the pull secret``` from the namespace:
 ```
 kubectl delete secret tigera-pull-secret -n tigera-internal
+```
+
+## Enable packet capture on honeypods
+
+The following manifest enables packet capture on default honeypods. <br/>
+Be sure to modify the namespace and selector if honeypods are placed elsewhere: <br/>
+https://docs.tigera.io/visibility/packetcapture
+
+```
+kubectl create -f - <<EOF
+apiVersion: projectcalico.org/v3
+kind: PacketCapture
+metadata:
+  name: capture-honey
+  namespace: tigera-internal
+spec:
+  selector: all()
+EOF
 ```
 
 ## Cache Refresh
