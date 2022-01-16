@@ -260,20 +260,20 @@ How Kubernetes forwards public network traffic through NodePort, LoadBalancer, a
 ![cs_network_planning_ov-01](https://user-images.githubusercontent.com/82048393/138760195-80b093bc-4018-4788-b1d5-514f05b6e171.png)
 
 
-#### Authentication Quickstart:
+## Authentication Quickstart (SUPER USER):
 Get started quickly with our default token authentication to log in to Calico Enterprise Manager UI and Kibana. <br/>
 ```
-kubectl create sa nigel -n default
+kubectl create sa damien -n default
 ```
 
 Give the service account permissions to access the Calico Enterprise Manager UI, and a Calico Enterprise cluster role:
 ```
-kubectl create clusterrolebinding nigel-access --clusterrole tigera-network-admin --serviceaccount default:nigel
+kubectl create clusterrolebinding damien-access --clusterrole tigera-network-admin --serviceaccount default:damien
 ```
 
-Get Base64 encoded token for SA account - ```nigel```:
+Get Base64 encoded token for SA account - ```damien```:
 ```
-kubectl get secret $(kubectl get serviceaccount nigel -o jsonpath='{range .secrets[*]}{.name}{"\n"}{end}' | grep token) -o go-template='{{.data.token | base64decode}}' && echo
+kubectl get secret $(kubectl get serviceaccount damien -o jsonpath='{range .secrets[*]}{.name}{"\n"}{end}' | grep token) -o go-template='{{.data.token | base64decode}}' && echo
 ```
 Connect to Kibana with the elastic username. Use the following command to decode the password:
 ```
@@ -284,7 +284,40 @@ Once logged in, you can configure users and their privileges from the settings p
 
 <img width="1448" alt="Screenshot 2021-10-25 at 22 25 34" src="https://user-images.githubusercontent.com/82048393/138773268-c81858f0-b5e8-4867-95d5-e6bd03a4ed88.png">
 
-#### Secure Calico Enterprise with network policy
+### Create a lesser-privleged service account - (READ-ONLY USER)
+
+The roles and bindings in this file provide a minimum starting point for setting up RBAC
+```
+wget https://docs.tigera.io/getting-started/kubernetes/installation/hosted/cnx/demo-manifests/min-ui-user-rbac.yaml
+```
+
+Run this command to replace with the name or email of the user you are permitting. In this case it's ```ons```
+```
+sed -i -e 's/<USER>/ons/g' min-ui-user-rbac.yaml
+```
+
+Use the following command to install the bindings
+```
+kubectl apply -f min-ui-user-rbac.yaml
+```
+
+Create a 2nd Service account ```ons``` with limited permissions
+```
+kubectl create serviceaccount ons
+```
+
+Create an Admin user with limited UI access to the Calico Enterprise Manager:
+
+```
+kubectl create clusterrolebinding ons-access --clusterrole tigera-ui-user --serviceaccount default:ons
+```
+
+Get the token from the service account ```ons```
+```
+kubectl get secret $(kubectl get serviceaccount ons -o jsonpath='{range .secrets[*]}{.name}{"\n"}{end}' | grep token) -o go-template='{{.data.token | base64decode}}' && echo
+```
+
+## Secure Calico Enterprise with network policy
 Install the following network policies to secure Calico Enterprise component communications.
 ```
 kubectl create -f https://docs.tigera.io/manifests/tigera-policies.yaml
