@@ -800,6 +800,29 @@ EOF
 
 
 
+## Alerting
+
+Documentation for creating ```GlobalAlert``` custom resources: <br/>
+https://docs.tigera.io/v3.11/reference/resources/globalalert <br/>
+<br/>
+
+Alert on ```NetworkSet``` changes:
+```
+kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/alerting/networksets.yaml
+```
+
+Alert on  suspicious ```DNS Access``` requests:
+```
+kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/alerting/dns-access.yaml
+```
+
+Alert on ```lateral access``` to a specific namespace:
+```
+kubectl apply -f https://raw.githubusercontent.com/tigera-solutions/aws-howdy-parter-calico-cloud/main/alerting/lateral-access.yaml
+``` 
+
+
+
 ## Cache Refresh
 ```
 kubectl patch felixconfiguration.p default -p '{"spec":{"flowLogsFlushInterval":"10s"}}'
