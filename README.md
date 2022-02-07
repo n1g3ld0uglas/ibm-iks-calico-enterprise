@@ -54,6 +54,12 @@ This could take between 2/3 mins to complete
 
 <img width="1758" alt="Screenshot 2022-02-07 at 12 42 37" src="https://user-images.githubusercontent.com/82048393/152790210-1a49749f-eb33-4be6-a2a4-bcb4945af119.png">
 
+Expected outcome: After installing Calico Cloud/Enterprise components:
+
+<img width="1758" alt="Screenshot 2022-02-07 at 12 59 00" src="https://user-images.githubusercontent.com/82048393/152793310-8783bf6e-93ce-4929-8cd9-68c1a48cbd4a.png">
+
+<img width="1758" alt="Screenshot 2022-02-07 at 12 59 22" src="https://user-images.githubusercontent.com/82048393/152793352-b9b19ef0-650e-4fc8-85de-8cae9adb092a.png">
+
 
 #### Setup paste option in VIM
 
