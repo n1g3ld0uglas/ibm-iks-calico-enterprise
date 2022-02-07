@@ -48,7 +48,12 @@ Run the below command and wait for the ```calico-typha``` pods to be created int
 kubectl get pods -A -w
 ```
 
+<img width="1758" alt="Screenshot 2022-02-07 at 12 42 00" src="https://user-images.githubusercontent.com/82048393/152790236-99f2df74-aae0-47a1-bb71-5fd81e579f8f.png">
+
 This could take between 2/3 mins to complete
+
+<img width="1758" alt="Screenshot 2022-02-07 at 12 42 37" src="https://user-images.githubusercontent.com/82048393/152790210-1a49749f-eb33-4be6-a2a4-bcb4945af119.png">
+
 
 #### Setup paste option in VIM
 
